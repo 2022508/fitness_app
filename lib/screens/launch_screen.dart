@@ -11,12 +11,13 @@ class LaunchScreen extends StatefulWidget {
 }
 
 class _LaunchScreenState extends State<LaunchScreen> {
-  String title = ("Fitness App");
+  String title = "Fitness App";
+  String pastTitle = "";
   Icon pswdVisible = Icon(Icons.visibility_off_outlined);
   bool isPswdVisible = true;
+  int isModalActive = 0;
 
-  void modalBottomSheet(Widget widget, String newTitle,
-      [Color? color, String? baseTitle]) {
+  void modalBottomSheet(Widget widget, String newTitle, [Color? color]) {
     showModalBottomSheet(
       backgroundColor: Colors.white,
       barrierColor: color ?? Colors.transparent,
@@ -31,12 +32,20 @@ class _LaunchScreenState extends State<LaunchScreen> {
       },
     ).then((value) {
       setState(() {
-        title = baseTitle ?? "Fitness App";
+        // this is for the title, it makes sure that the title is the one it should show
+        isModalActive -= 1;
+        if (isModalActive == 0) {
+          title = "Fitness App";
+        } else {
+          title = pastTitle;
+        }
       });
     });
     // await Future.delayed(const Duration(microseconds: 120000));
     setState(() {
+      pastTitle = title;
       title = newTitle;
+      isModalActive += 1;
     });
   }
 
@@ -91,7 +100,10 @@ class _LaunchScreenState extends State<LaunchScreen> {
               ],
             ),
             ListTile(
-                title: MyElevatedButton(text: "Sign up"),
+                title: MyElevatedButton(
+                  text: "Sign up",
+                  onPressed: signUpModalBottomSheet,
+                ),
                 contentPadding: EdgeInsets.zero),
             ListTile(title: SizedBox(height: 40)),
           ],
@@ -154,7 +166,10 @@ class _LaunchScreenState extends State<LaunchScreen> {
               ],
             ),
             ListTile(
-                title: MyElevatedButton(text: "Log in"),
+                title: MyElevatedButton(
+                  text: "Log in",
+                  onPressed: logInModalBottomSheet,
+                ),
                 contentPadding: EdgeInsets.zero),
             ListTile(title: SizedBox(height: 40)),
           ],
@@ -164,28 +179,28 @@ class _LaunchScreenState extends State<LaunchScreen> {
 
   void pfpModalBottomSheet() {
     modalBottomSheet(
-        Row(
-          children: [
-            Expanded(
-              child: IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.camera_alt,
-                  size: 100,
-                ),
+      Row(
+        children: [
+          Expanded(
+            child: IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.camera_alt,
+                size: 100,
               ),
             ),
-            Expanded(
-              child: IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.photo, size: 100),
-              ),
-            )
-          ],
-        ),
-        "Profile Picture",
-        Colors.black.withOpacity(0.5),
-        "Create Account");
+          ),
+          Expanded(
+            child: IconButton(
+              onPressed: () {},
+              icon: Icon(Icons.photo, size: 100),
+            ),
+          )
+        ],
+      ),
+      "Profile Picture",
+      Colors.black.withOpacity(0.5),
+    );
   }
 
   @override
