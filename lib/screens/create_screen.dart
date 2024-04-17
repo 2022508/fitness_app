@@ -1,8 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:fitness_app/components/elevated_button.dart';
-import 'package:fitness_app/components/workout_data_container.dart';
-import 'package:fitness_app/components/workouts_button.dart';
 import 'package:flutter/material.dart';
 
 class CreateScreen extends StatefulWidget {
@@ -88,24 +86,14 @@ class _CreateScreenState extends State<CreateScreen> {
                   ),
                   SizedBox(height: 5),
                   Row(
-                    children: [
-                      Spacer(),
-                      TextButton(
-                          onPressed: () {},
-                          child: Text(
-                            "Entering past workouts?",
-                          )),
-                    ],
-                  ),
-                  Row(
                     children: [Expanded(child: MyElevatedButton(text: "Add"))],
                   ),
                 ],
               ),
             ),
-            MyWorkoutData(),
+            // MyWorkoutData(),
             SizedBox(height: 10),
-            MyWorkoutData(),
+            // MyWorkoutData(),
           ],
         ),
       ),
