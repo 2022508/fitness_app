@@ -3,8 +3,8 @@
 import 'package:fitness_app/components/elevated_button.dart';
 import 'package:fitness_app/components/password_text_field.dart';
 import 'package:fitness_app/components/text_field.dart';
+import 'package:fitness_app/screens/navbar_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class LaunchScreen extends StatefulWidget {
   const LaunchScreen({super.key});
@@ -72,7 +72,14 @@ class _LaunchScreenState extends State<LaunchScreen> {
             ),
             // MyListTile(widget: MyElevatedButton(text: "Log in")),
             ListTile(
-              title: MyElevatedButton(text: "Log in"),
+              title: MyElevatedButton(
+                  text: "Log in",
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => MyNavBar()),
+                    );
+                  }),
               contentPadding: EdgeInsets.zero,
             ),
             Row(
@@ -117,7 +124,14 @@ class _LaunchScreenState extends State<LaunchScreen> {
                       ))),
             ),
             ListTile(
-              title: MyElevatedButton(text: "Sign up"),
+              title: MyElevatedButton(
+                  text: "Sign up",
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => MyNavBar()),
+                    );
+                  }),
               contentPadding: EdgeInsets.zero,
             ),
             Row(
