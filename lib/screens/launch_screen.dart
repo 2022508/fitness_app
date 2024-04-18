@@ -22,6 +22,8 @@ class _LaunchScreenState extends State<LaunchScreen> {
 
   void modalBottomSheet(Widget widget, String newTitle, [Color? color]) {
     showModalBottomSheet(
+      // https://stackoverflow.com/questions/53869078/how-to-move-bottomsheet-along-with-keyboard-which-has-textfieldautofocused-is-t
+      isScrollControlled: true,
       backgroundColor: Colors.white,
       barrierColor: color ?? Colors.transparent,
       clipBehavior: Clip.none,
@@ -30,7 +32,13 @@ class _LaunchScreenState extends State<LaunchScreen> {
         // https://stackoverflow.com/questions/52414629/how-to-update-state-of-a-modalbottomsheet-in-flutter
         return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
-          return Padding(padding: const EdgeInsets.all(8.0), child: widget);
+          return Padding(
+              padding: EdgeInsets.only(
+                  left: 8,
+                  right: 8,
+                  top: 8,
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: widget);
         });
       },
     ).then((value) {
