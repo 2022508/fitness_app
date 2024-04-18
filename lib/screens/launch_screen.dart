@@ -1,7 +1,10 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:fitness_app/components/elevated_button.dart';
+import 'package:fitness_app/components/password_text_field.dart';
+import 'package:fitness_app/components/text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class LaunchScreen extends StatefulWidget {
   const LaunchScreen({super.key});
@@ -53,27 +56,10 @@ class _LaunchScreenState extends State<LaunchScreen> {
     modalBottomSheet(
         Wrap(
           children: [
-            TextField(
-                decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.email), hintText: "Email")),
-            TextField(
-                obscureText: isPswdVisible,
-                decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.lock),
-                    hintText: "Password",
-                    suffixIcon: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            if (isPswdVisible) {
-                              pswdVisible = Icon(Icons.visibility_outlined);
-                              isPswdVisible = false;
-                            } else {
-                              pswdVisible = Icon(Icons.visibility_off_outlined);
-                              isPswdVisible = true;
-                            }
-                          });
-                        },
-                        icon: pswdVisible))),
+            MyTextField(
+                hintText: "Name", prefixIcon: Icon(Icons.account_circle_sharp)),
+            MyPasswordTextField(hintText: "Password"),
+
             Row(
               children: [
                 Spacer(),
@@ -115,31 +101,10 @@ class _LaunchScreenState extends State<LaunchScreen> {
     modalBottomSheet(
         Wrap(
           children: [
-            TextField(
-                decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.account_circle_sharp),
-                    hintText: "Name")),
-            TextField(
-                decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.email), hintText: "Email")),
-            TextField(
-                obscureText: isPswdVisible,
-                decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.lock),
-                    hintText: "Password",
-                    suffixIcon: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            if (isPswdVisible) {
-                              pswdVisible = Icon(Icons.visibility_outlined);
-                              isPswdVisible = false;
-                            } else {
-                              pswdVisible = Icon(Icons.visibility_off_outlined);
-                              isPswdVisible = true;
-                            }
-                          });
-                        },
-                        icon: pswdVisible))),
+            MyTextField(
+                hintText: "Name", prefixIcon: Icon(Icons.account_circle_sharp)),
+            MyTextField(hintText: "Email", prefixIcon: Icon(Icons.email)),
+            MyPasswordTextField(hintText: "Password"),
             Padding(
               padding: const EdgeInsets.only(top: 5),
               child: Center(

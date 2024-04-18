@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:fitness_app/components/elevated_button.dart';
+import 'package:fitness_app/components/text_field.dart';
 import 'package:flutter/material.dart';
 
 class CreateScreen extends StatefulWidget {
@@ -55,33 +56,29 @@ class _CreateScreenState extends State<CreateScreen> {
                   // unsure which form to go with for the exercise name
                   Row(children: [
                     Expanded(
-                        child: TextField(
-                            decoration: InputDecoration(
-                                prefixIcon: Icon(Icons.fitness_center),
-                                hintText: "Workout name")))
+                        child: MyTextField(
+                            hintText: "Workout name",
+                            prefixIcon: Icon(Icons.fitness_center)))
                   ]),
                   SizedBox(height: 10),
                   Row(children: [
                     Expanded(
-                        child: TextField(
-                            decoration: InputDecoration(
-                                prefixIcon: Icon(Icons.fitness_center),
-                                hintText: "Exercise")))
+                        child: MyTextField(
+                            hintText: "Exercise",
+                            prefixIcon: Icon(Icons.fitness_center)))
                   ]),
                   SizedBox(height: 10),
                   Row(
                     children: [
                       Expanded(
-                          child: TextField(
-                              decoration: InputDecoration(
-                                  prefixIcon: Icon(Icons.fitness_center),
-                                  hintText: "Weight"))),
+                          child: MyTextField(
+                              hintText: "Weight",
+                              prefixIcon: Icon(Icons.fitness_center))),
                       SizedBox(width: 10),
                       Expanded(
-                          child: TextField(
-                              decoration: InputDecoration(
-                                  prefixIcon: Icon(Icons.repeat),
-                                  hintText: "Reps"))),
+                          child: MyTextField(
+                              hintText: "Reps",
+                              prefixIcon: Icon(Icons.fitness_center))),
                     ],
                   ),
                   SizedBox(height: 5),
