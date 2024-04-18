@@ -20,36 +20,35 @@ class _HomePageState extends State<HomePage> {
         body: SafeArea(
             child: SingleChildScrollView(
       child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Center(
-            child: Container(
-              width: width,
-              margin: const EdgeInsets.all(30),
-              color: Colors.grey[200],
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'Recent workouts',
-                      style: TextStyle(
-                        fontSize: 35,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          width: width,
+          margin: const EdgeInsets.all(30),
+          color: Colors.grey[200],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'Recent workouts',
+                  style: TextStyle(
+                    fontSize: 35,
+                    fontWeight: FontWeight.w400,
                   ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: MyWorkoutsButton(text: "08/04/2024"),
-                  ),
-                ],
+                ),
               ),
-            ),
-          )),
+              SizedBox(
+                height: 10,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: MyWorkoutsButton(text: "08/04/2024"),
+              ),
+            ],
+          ),
+        ),
+      ),
     )));
   }
 }
