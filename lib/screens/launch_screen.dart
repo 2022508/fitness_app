@@ -207,32 +207,35 @@ class _LaunchScreenState extends State<LaunchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(60),
-          child: Column(
-            children: [
-              const SizedBox(height: 200),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(title, style: TextStyle(fontSize: 30)),
-              ),
-              const SizedBox(height: 300),
-              Row(
-                children: [
-                  Expanded(
-                      child: MyElevatedButton(
-                          text: "Log in", onPressed: logInModalBottomSheet)),
-                ],
-              ),
-              const SizedBox(height: 30),
-              Row(
-                children: [
-                  Expanded(
-                      child: MyElevatedButton(
-                          text: "Sign up", onPressed: signUpModalBottomSheet)),
-                ],
-              ),
-            ],
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(60),
+            child: Column(
+              children: [
+                const SizedBox(height: 200),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(title, style: TextStyle(fontSize: 30)),
+                ),
+                const SizedBox(height: 300),
+                Row(
+                  children: [
+                    Expanded(
+                        child: MyElevatedButton(
+                            text: "Log in", onPressed: logInModalBottomSheet)),
+                  ],
+                ),
+                const SizedBox(height: 30),
+                Row(
+                  children: [
+                    Expanded(
+                        child: MyElevatedButton(
+                            text: "Sign up",
+                            onPressed: signUpModalBottomSheet)),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
