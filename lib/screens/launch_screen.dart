@@ -23,7 +23,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
     showModalBottomSheet(
       // https://stackoverflow.com/questions/53869078/how-to-move-bottomsheet-along-with-keyboard-which-has-textfieldautofocused-is-t
       isScrollControlled: true,
-      backgroundColor: Color.fromARGB(255, 177, 88, 84),
+      backgroundColor: Colors.transparent,
       barrierColor: color ?? Colors.transparent,
       clipBehavior: Clip.none,
       context: context,
@@ -40,7 +40,9 @@ class _LaunchScreenState extends State<LaunchScreen> {
               child: widget);
         });
       },
-    ).then((value) {
+    ).then((value) async {
+      await Future.delayed(const Duration(microseconds: 130000));
+
       setState(() {
         // this is for the title, it makes sure that the title is the one it should show
         isModalActive -= 1;
@@ -215,6 +217,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -236,20 +239,34 @@ class _LaunchScreenState extends State<LaunchScreen> {
                         color: Colors.white,
                         fontWeight: FontWeight.bold)),
               ),
-              SizedBox(height: height * 0.55),
-              SizedBox(
-                height: height * 0.065,
-                width: width * 0.39,
-                child: MyElevatedButton(
-                    text: "SIGN IN", onPressed: logInModalBottomSheet),
-              ),
-              SizedBox(height: height * 0.02),
-              SizedBox(
-                height: height * 0.065,
-                width: width * 0.39,
-                child: MyElevatedButton(
-                    text: "SIGN UP", onPressed: signUpModalBottomSheet),
-              )
+              Builder(builder: (context) {
+                if (isModalActive == 0) {
+                  return Column(
+                    children: [
+                      SizedBox(height: height * 0.55),
+                      SizedBox(
+                        height: height * 0.065,
+                        width: width * 0.39,
+                        child: MyElevatedButton(
+                            text: "SIGN IN", onPressed: logInModalBottomSheet),
+                      ),
+                      SizedBox(height: height * 0.02),
+                      SizedBox(
+                        height: height * 0.065,
+                        width: width * 0.39,
+                        child: MyElevatedButton(
+                            text: "SIGN UP", onPressed: signUpModalBottomSheet),
+                      ),
+                    ],
+                  );
+                } else {
+                  return SizedBox();
+                }
+                // return Text(
+                //   "FFFFFFFF",
+                //   style: TextStyle(fontSize: 20, color: Colors.white),
+                // );
+              }),
             ],
           ),
         ),
