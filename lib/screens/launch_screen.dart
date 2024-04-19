@@ -14,8 +14,7 @@ class LaunchScreen extends StatefulWidget {
 }
 
 class _LaunchScreenState extends State<LaunchScreen> {
-  String title = "Fitness App";
-  String pastTitle = "";
+  String title = "FITNESS APP";
   Icon pswdVisible = Icon(Icons.visibility_off_outlined);
   bool isPswdVisible = true;
   int isModalActive = 0;
@@ -24,7 +23,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
     showModalBottomSheet(
       // https://stackoverflow.com/questions/53869078/how-to-move-bottomsheet-along-with-keyboard-which-has-textfieldautofocused-is-t
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: Color.fromARGB(255, 177, 88, 84),
       barrierColor: color ?? Colors.transparent,
       clipBehavior: Clip.none,
       context: context,
@@ -47,25 +46,29 @@ class _LaunchScreenState extends State<LaunchScreen> {
         isModalActive -= 1;
         if (isModalActive == 0) {
           title = "Fitness App";
-        } else {
-          title = pastTitle;
         }
       });
     });
     // await Future.delayed(const Duration(microseconds: 120000));
     setState(() {
-      pastTitle = title;
-      title = newTitle;
       isModalActive += 1;
     });
   }
 
   void logInModalBottomSheet() {
+    setState(() {
+      title = "Welcome back";
+    });
+    if (isModalActive != 0) {
+      Navigator.pop(context);
+    }
     modalBottomSheet(
         Wrap(
           children: [
             MyTextField(
-                hintText: "Name", prefixIcon: Icon(Icons.account_circle_sharp)),
+                hintText: "Name",
+                prefixIcon:
+                    Icon(Icons.account_circle_sharp, color: Colors.white)),
             MyPasswordTextField(hintText: "Password"),
 
             Row(
@@ -75,13 +78,14 @@ class _LaunchScreenState extends State<LaunchScreen> {
                     onPressed: () {},
                     child: Text(
                       "Forgot password?",
+                      style: TextStyle(color: Colors.white, fontSize: 16),
                     )),
               ],
             ),
             // MyListTile(widget: MyElevatedButton(text: "Log in")),
             ListTile(
               title: MyElevatedButton(
-                  text: "Log in",
+                  text: "Sign in",
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -92,12 +96,16 @@ class _LaunchScreenState extends State<LaunchScreen> {
             ),
             Row(
               children: [
-                Expanded(child: Divider(height: 10)),
+                Expanded(child: Divider(height: 10, color: Colors.white)),
                 Padding(
                   padding: EdgeInsets.only(left: 15, right: 15),
-                  child: Text("or", textAlign: TextAlign.center),
+                  child: Text(
+                    "or",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
-                Expanded(child: Divider(height: 10)),
+                Expanded(child: Divider(height: 10, color: Colors.white)),
               ],
             ),
             ListTile(
@@ -113,12 +121,22 @@ class _LaunchScreenState extends State<LaunchScreen> {
   }
 
   void signUpModalBottomSheet() {
+    setState(() {
+      title = "Create Account";
+    });
+    if (isModalActive != 0) {
+      Navigator.pop(context);
+    }
     modalBottomSheet(
         Wrap(
           children: [
             MyTextField(
-                hintText: "Name", prefixIcon: Icon(Icons.account_circle_sharp)),
-            MyTextField(hintText: "Email", prefixIcon: Icon(Icons.email)),
+                hintText: "Name",
+                prefixIcon:
+                    Icon(Icons.account_circle_sharp, color: Colors.white)),
+            MyTextField(
+                hintText: "Email",
+                prefixIcon: Icon(Icons.email, color: Colors.white)),
             MyPasswordTextField(hintText: "Password"),
             Padding(
               padding: const EdgeInsets.only(top: 5),
@@ -144,17 +162,19 @@ class _LaunchScreenState extends State<LaunchScreen> {
             ),
             Row(
               children: [
-                Expanded(child: Divider(height: 10)),
+                Expanded(child: Divider(height: 10, color: Colors.white)),
                 Padding(
                   padding: EdgeInsets.only(left: 15, right: 15),
-                  child: Text("or", textAlign: TextAlign.center),
+                  child: Text("or",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.white)),
                 ),
-                Expanded(child: Divider(height: 10)),
+                Expanded(child: Divider(height: 10, color: Colors.white)),
               ],
             ),
             ListTile(
                 title: MyElevatedButton(
-                  text: "Log in",
+                  text: "Sign in",
                   onPressed: logInModalBottomSheet,
                 ),
                 contentPadding: EdgeInsets.zero),
@@ -174,13 +194,14 @@ class _LaunchScreenState extends State<LaunchScreen> {
               icon: Icon(
                 Icons.camera_alt,
                 size: 100,
+                color: Colors.white,
               ),
             ),
           ),
           Expanded(
             child: IconButton(
               onPressed: () {},
-              icon: Icon(Icons.photo, size: 100),
+              icon: Icon(Icons.photo, size: 100, color: Colors.white),
             ),
           )
         ],
@@ -192,37 +213,44 @@ class _LaunchScreenState extends State<LaunchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(60),
-            child: Column(
-              children: [
-                const SizedBox(height: 200),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(title, style: TextStyle(fontSize: 30)),
-                ),
-                const SizedBox(height: 300),
-                Row(
-                  children: [
-                    Expanded(
-                        child: MyElevatedButton(
-                            text: "Log in", onPressed: logInModalBottomSheet)),
-                  ],
-                ),
-                const SizedBox(height: 30),
-                Row(
-                  children: [
-                    Expanded(
-                        child: MyElevatedButton(
-                            text: "Sign up",
-                            onPressed: signUpModalBottomSheet)),
-                  ],
-                ),
-              ],
+        child: Container(
+          height: double.infinity,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/images/background.jpg"),
+              fit: BoxFit.fill,
             ),
+          ),
+          child: Column(
+            children: [
+              SizedBox(height: height * 0.13),
+              Align(
+                alignment: Alignment.center,
+                child: Text(title,
+                    style: TextStyle(
+                        fontSize: 40,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold)),
+              ),
+              SizedBox(height: height * 0.55),
+              SizedBox(
+                height: height * 0.065,
+                width: width * 0.39,
+                child: MyElevatedButton(
+                    text: "SIGN IN", onPressed: logInModalBottomSheet),
+              ),
+              SizedBox(height: height * 0.02),
+              SizedBox(
+                height: height * 0.065,
+                width: width * 0.39,
+                child: MyElevatedButton(
+                    text: "SIGN UP", onPressed: signUpModalBottomSheet),
+              )
+            ],
           ),
         ),
       ),
