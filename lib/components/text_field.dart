@@ -15,8 +15,18 @@ class MyTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
+        style: TextStyle(color: Colors.white),
         readOnly: readOnly ?? false,
-        decoration:
-            InputDecoration(prefixIcon: prefixIcon, hintText: hintText));
+        decoration: InputDecoration(
+          prefixIcon: prefixIcon,
+          hintText: hintText,
+          hintStyle: TextStyle(color: Colors.white),
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.white),
+          ),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.white),
+          ),
+        ));
   }
 }
