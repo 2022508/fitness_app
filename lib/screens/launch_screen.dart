@@ -70,8 +70,9 @@ class _LaunchScreenState extends State<LaunchScreen> {
             MyTextField(
                 hintText: "Name",
                 prefixIcon:
-                    Icon(Icons.account_circle_sharp, color: Colors.white)),
-            MyPasswordTextField(hintText: "Password"),
+                    Icon(Icons.account_circle_sharp, color: Colors.white),
+                color: Colors.white),
+            MyPasswordTextField(hintText: "Password", color: Colors.white),
 
             Row(
               children: [
@@ -135,11 +136,13 @@ class _LaunchScreenState extends State<LaunchScreen> {
             MyTextField(
                 hintText: "Name",
                 prefixIcon:
-                    Icon(Icons.account_circle_sharp, color: Colors.white)),
+                    Icon(Icons.account_circle_sharp, color: Colors.white),
+                color: Colors.white),
             MyTextField(
                 hintText: "Email",
-                prefixIcon: Icon(Icons.email, color: Colors.white)),
-            MyPasswordTextField(hintText: "Password"),
+                prefixIcon: Icon(Icons.email, color: Colors.white),
+                color: Colors.white),
+            MyPasswordTextField(hintText: "Password", color: Colors.white),
             Padding(
               padding: const EdgeInsets.only(top: 5),
               child: Center(

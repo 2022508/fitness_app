@@ -36,6 +36,8 @@ class _MyNavBarState extends State<MyNavBar> {
         children: myPages,
       )),
       bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Color.fromRGBO(201, 56, 11, 1),
+          // backgroundColor: Color.fromRGBO(170, 91, 67, 1),
           onTap: (value) {
             if (value == 5) {
               Navigator.push(
@@ -49,7 +51,8 @@ class _MyNavBarState extends State<MyNavBar> {
             }
           },
           currentIndex: myIndex,
-          selectedItemColor: Colors.blue,
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.black,
           type: BottomNavigationBarType.fixed,
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
