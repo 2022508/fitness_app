@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_print
 
 import 'package:fitness_app/components/elevated_button.dart';
+import 'package:fitness_app/components/text_field.dart';
 import 'package:fitness_app/components/workout_data_container.dart';
 import 'package:fitness_app/services/workout_data_services.dart';
 import 'package:flutter/material.dart';
@@ -103,10 +104,9 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                       Row(
                         children: [
                           Expanded(
-                            child: TextField(
-                                decoration: InputDecoration(
-                                    prefixIcon: Icon(Icons.fitness_center),
-                                    hintText: "Exercise")),
+                            child: MyTextField(
+                                hintText: "Exercise Name",
+                                prefixIcon: Icon(Icons.fitness_center)),
                           ),
                         ],
                       ),
@@ -114,17 +114,15 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                       Row(
                         children: [
                           Expanded(
-                            child: TextField(
-                                decoration: InputDecoration(
-                                    prefixIcon: Icon(Icons.fitness_center),
-                                    hintText: "Weight")),
+                            child: MyTextField(
+                                hintText: "Weight",
+                                prefixIcon: Icon(Icons.fitness_center)),
                           ),
                           SizedBox(width: 10),
                           Expanded(
-                            child: TextField(
-                                decoration: InputDecoration(
-                                    prefixIcon: Icon(Icons.repeat),
-                                    hintText: "Reps")),
+                            child: MyTextField(
+                                hintText: "Reps",
+                                prefixIcon: Icon(Icons.repeat)),
                           ),
                         ],
                       ),
