@@ -6,7 +6,6 @@ import 'package:fitness_app/components/password_text_field.dart';
 import 'package:fitness_app/components/text_field.dart';
 import 'package:fitness_app/screens/navbar_screen.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer';
 
 class LaunchScreen extends StatefulWidget {
   const LaunchScreen({super.key});
@@ -18,6 +17,10 @@ class LaunchScreen extends StatefulWidget {
 class _LaunchScreenState extends State<LaunchScreen> {
   final signinEmailController = TextEditingController();
   final signinPasswordController = TextEditingController();
+
+  final signupNameController = TextEditingController();
+  final signupEmailController = TextEditingController();
+  final signupPasswordController = TextEditingController();
 
   void signIn() async {
     Navigator.pop(context);
@@ -38,6 +41,33 @@ class _LaunchScreenState extends State<LaunchScreen> {
         alertDialog(Text("No user found for that email."));
       } else if (e.code == 'wrong-password') {
         alertDialog(Text("Wrong password provided for that user."));
+      } else if (e.code == 'invalid-email') {
+        alertDialog(Text("Invalid email provided."));
+      }
+    }
+  }
+
+  void signUp() async {
+    Navigator.pop(context);
+
+    showDialog(
+        context: context,
+        builder: (context) {
+          return Center(child: CircularProgressIndicator());
+        });
+    try {
+      UserCredential result = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+              email: signupEmailController.text,
+              password: signupPasswordController.text);
+      Navigator.pop(context);
+      await result.user?.updateDisplayName(signupNameController.text);
+    } on FirebaseAuthException catch (e) {
+      Navigator.pop(context);
+      if (e.code == 'weak-password') {
+        alertDialog(Text("The password provided is too weak."));
+      } else if (e.code == 'email-already-in-use') {
+        alertDialog(Text("The account already exists for that email."));
       } else if (e.code == 'invalid-email') {
         alertDialog(Text("Invalid email provided."));
       }
@@ -175,15 +205,20 @@ class _LaunchScreenState extends State<LaunchScreen> {
         Wrap(
           children: [
             MyTextField(
+                controller: signupNameController,
                 hintText: "Name",
                 prefixIcon:
                     Icon(Icons.account_circle_sharp, color: Colors.white),
                 color: Colors.white),
             MyTextField(
+                controller: signupEmailController,
                 hintText: "Email",
                 prefixIcon: Icon(Icons.email, color: Colors.white),
                 color: Colors.white),
-            MyPasswordTextField(hintText: "Password", color: Colors.white),
+            MyPasswordTextField(
+                controller: signupPasswordController,
+                hintText: "Password",
+                color: Colors.white),
             Padding(
               padding: const EdgeInsets.only(top: 5),
               child: Center(
@@ -199,10 +234,11 @@ class _LaunchScreenState extends State<LaunchScreen> {
               title: MyElevatedButton(
                   text: "Sign up",
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => MyNavBar()),
-                    );
+                    signUp();
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(builder: (context) => MyNavBar()),
+                    // );
                   }),
               contentPadding: EdgeInsets.zero,
             ),
