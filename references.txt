@@ -1,0 +1,5 @@
+https://www.youtube.com/watch?v=_3W-JuIVFlg 
+https://stackoverflow.com/questions/53869078/how-to-move-bottomsheet-along-with-keyboard-which-has-textfieldautofocused-is-t
+https://stackoverflow.com/questions/52414629/how-to-update-state-of-a-modalbottomsheet-in-flutter
+https://www.youtube.com/watch?v=2UG4rdsCZKU
+https://stackoverflow.com/questions/55579906/how-to-count-items-occurence-in-a-list

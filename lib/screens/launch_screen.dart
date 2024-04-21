@@ -6,6 +6,7 @@ import 'package:fitness_app/components/password_text_field.dart';
 import 'package:fitness_app/components/text_field.dart';
 import 'package:fitness_app/screens/navbar_screen.dart';
 import 'package:flutter/material.dart';
+import 'dart:developer';
 
 class LaunchScreen extends StatefulWidget {
   const LaunchScreen({super.key});
@@ -19,9 +20,36 @@ class _LaunchScreenState extends State<LaunchScreen> {
   final signinPasswordController = TextEditingController();
 
   void signIn() async {
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: signinEmailController.text,
-        password: signinPasswordController.text);
+    Navigator.pop(context);
+
+    showDialog(
+        context: context,
+        builder: (context) {
+          return Center(child: CircularProgressIndicator());
+        });
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: signinEmailController.text,
+          password: signinPasswordController.text);
+      Navigator.pop(context);
+    } on FirebaseAuthException catch (e) {
+      Navigator.pop(context);
+      if (e.code == 'user-not-found') {
+        alertDialog(Text("No user found for that email."));
+      } else if (e.code == 'wrong-password') {
+        alertDialog(Text("Wrong password provided for that user."));
+      } else if (e.code == 'invalid-email') {
+        alertDialog(Text("Invalid email provided."));
+      }
+    }
+  }
+
+  void alertDialog(Text error) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(title: error);
+        });
   }
 
   String title = "FITNESS APP";
@@ -31,14 +59,12 @@ class _LaunchScreenState extends State<LaunchScreen> {
 
   void modalBottomSheet(Widget widget, String newTitle, [Color? color]) {
     showModalBottomSheet(
-      // https://stackoverflow.com/questions/53869078/how-to-move-bottomsheet-along-with-keyboard-which-has-textfieldautofocused-is-t
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       barrierColor: color ?? Colors.transparent,
       clipBehavior: Clip.none,
       context: context,
       builder: (context) {
-        // https://stackoverflow.com/questions/52414629/how-to-update-state-of-a-modalbottomsheet-in-flutter
         return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
           return Padding(
@@ -237,9 +263,10 @@ class _LaunchScreenState extends State<LaunchScreen> {
     double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Container(
-          height: double.infinity,
+          // height: double.infinity,
           decoration: BoxDecoration(
             image: DecorationImage(
               image: AssetImage("assets/images/background.jpg"),
@@ -280,10 +307,6 @@ class _LaunchScreenState extends State<LaunchScreen> {
                 } else {
                   return SizedBox();
                 }
-                // return Text(
-                //   "FFFFFFFF",
-                //   style: TextStyle(fontSize: 20, color: Colors.white),
-                // );
               }),
             ],
           ),

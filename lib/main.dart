@@ -1,4 +1,3 @@
-import 'package:fitness_app/screens/launch_screen.dart';
 import 'package:fitness_app/services/auth_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';

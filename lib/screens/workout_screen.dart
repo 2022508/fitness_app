@@ -29,7 +29,6 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
       WorkoutDataService(exercise: "Squats", reps: 8, weight: 40),
       WorkoutDataService(exercise: "Squats", reps: 9, weight: 40),
     ];
-    //https://stackoverflow.com/questions/55579906/how-to-count-items-occurence-in-a-list
 
     Map<String, List<double>> map2 = {};
     List<double> reps = [];
