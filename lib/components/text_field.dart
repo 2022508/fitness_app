@@ -4,19 +4,24 @@ import 'package:flutter/material.dart';
 
 class MyTextField extends StatelessWidget {
   final String hintText;
+  final TextEditingController? controller;
   final Icon prefixIcon;
   final bool? readOnly;
   final Color? color;
   const MyTextField(
       {super.key,
       required this.hintText,
+      this.controller,
       required this.prefixIcon,
       this.readOnly,
       this.color});
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController tempController =
+        TextEditingController(text: "sdg");
     return TextField(
+        controller: controller ?? tempController,
         style: TextStyle(color: color ?? Colors.black),
         readOnly: readOnly ?? false,
         decoration: InputDecoration(

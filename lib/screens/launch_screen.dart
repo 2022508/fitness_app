@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fitness_app/components/elevated_button.dart';
 import 'package:fitness_app/components/password_text_field.dart';
 import 'package:fitness_app/components/text_field.dart';
@@ -14,6 +15,15 @@ class LaunchScreen extends StatefulWidget {
 }
 
 class _LaunchScreenState extends State<LaunchScreen> {
+  final signinEmailController = TextEditingController();
+  final signinPasswordController = TextEditingController();
+
+  void signIn() async {
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: signinEmailController.text,
+        password: signinPasswordController.text);
+  }
+
   String title = "FITNESS APP";
   Icon pswdVisible = Icon(Icons.visibility_off_outlined);
   bool isPswdVisible = true;
@@ -68,11 +78,15 @@ class _LaunchScreenState extends State<LaunchScreen> {
         Wrap(
           children: [
             MyTextField(
-                hintText: "Name",
+                hintText: "Email",
+                controller: signinEmailController,
                 prefixIcon:
                     Icon(Icons.account_circle_sharp, color: Colors.white),
                 color: Colors.white),
-            MyPasswordTextField(hintText: "Password", color: Colors.white),
+            MyPasswordTextField(
+                hintText: "Password",
+                controller: signinPasswordController,
+                color: Colors.white),
 
             Row(
               children: [
@@ -90,10 +104,11 @@ class _LaunchScreenState extends State<LaunchScreen> {
               title: MyElevatedButton(
                   text: "Sign in",
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => MyNavBar()),
-                    );
+                    signIn();
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(builder: (context) => MyNavBar()),
+                    // );
                   }),
               contentPadding: EdgeInsets.zero,
             ),
