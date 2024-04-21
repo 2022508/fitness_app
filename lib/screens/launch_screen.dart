@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fitness_app/components/elevated_button.dart';
 import 'package:fitness_app/components/password_text_field.dart';
 import 'package:fitness_app/components/text_field.dart';
@@ -14,6 +15,73 @@ class LaunchScreen extends StatefulWidget {
 }
 
 class _LaunchScreenState extends State<LaunchScreen> {
+  final signinEmailController = TextEditingController();
+  final signinPasswordController = TextEditingController();
+
+  final signupNameController = TextEditingController();
+  final signupEmailController = TextEditingController();
+  final signupPasswordController = TextEditingController();
+
+  void signIn() async {
+    Navigator.pop(context);
+
+    showDialog(
+        context: context,
+        builder: (context) {
+          return Center(child: CircularProgressIndicator());
+        });
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: signinEmailController.text,
+          password: signinPasswordController.text);
+      Navigator.pop(context);
+    } on FirebaseAuthException catch (e) {
+      Navigator.pop(context);
+      if (e.code == 'user-not-found') {
+        alertDialog(Text("No user found for that email."));
+      } else if (e.code == 'wrong-password') {
+        alertDialog(Text("Wrong password provided for that user."));
+      } else if (e.code == 'invalid-email') {
+        alertDialog(Text("Invalid email provided."));
+      }
+    }
+  }
+
+  void signUp() async {
+    Navigator.pop(context);
+
+    showDialog(
+        context: context,
+        builder: (context) {
+          return Center(child: CircularProgressIndicator());
+        });
+    try {
+      UserCredential result = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+              email: signupEmailController.text,
+              password: signupPasswordController.text);
+      Navigator.pop(context);
+      await result.user?.updateDisplayName(signupNameController.text);
+    } on FirebaseAuthException catch (e) {
+      Navigator.pop(context);
+      if (e.code == 'weak-password') {
+        alertDialog(Text("The password provided is too weak."));
+      } else if (e.code == 'email-already-in-use') {
+        alertDialog(Text("The account already exists for that email."));
+      } else if (e.code == 'invalid-email') {
+        alertDialog(Text("Invalid email provided."));
+      }
+    }
+  }
+
+  void alertDialog(Text error) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(title: error);
+        });
+  }
+
   String title = "FITNESS APP";
   Icon pswdVisible = Icon(Icons.visibility_off_outlined);
   bool isPswdVisible = true;
@@ -21,14 +89,12 @@ class _LaunchScreenState extends State<LaunchScreen> {
 
   void modalBottomSheet(Widget widget, String newTitle, [Color? color]) {
     showModalBottomSheet(
-      // https://stackoverflow.com/questions/53869078/how-to-move-bottomsheet-along-with-keyboard-which-has-textfieldautofocused-is-t
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       barrierColor: color ?? Colors.transparent,
       clipBehavior: Clip.none,
       context: context,
       builder: (context) {
-        // https://stackoverflow.com/questions/52414629/how-to-update-state-of-a-modalbottomsheet-in-flutter
         return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
           return Padding(
@@ -68,11 +134,15 @@ class _LaunchScreenState extends State<LaunchScreen> {
         Wrap(
           children: [
             MyTextField(
-                hintText: "Name",
+                hintText: "Email",
+                controller: signinEmailController,
                 prefixIcon:
                     Icon(Icons.account_circle_sharp, color: Colors.white),
                 color: Colors.white),
-            MyPasswordTextField(hintText: "Password", color: Colors.white),
+            MyPasswordTextField(
+                hintText: "Password",
+                controller: signinPasswordController,
+                color: Colors.white),
 
             Row(
               children: [
@@ -90,10 +160,11 @@ class _LaunchScreenState extends State<LaunchScreen> {
               title: MyElevatedButton(
                   text: "Sign in",
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => MyNavBar()),
-                    );
+                    signIn();
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(builder: (context) => MyNavBar()),
+                    // );
                   }),
               contentPadding: EdgeInsets.zero,
             ),
@@ -134,15 +205,20 @@ class _LaunchScreenState extends State<LaunchScreen> {
         Wrap(
           children: [
             MyTextField(
+                controller: signupNameController,
                 hintText: "Name",
                 prefixIcon:
                     Icon(Icons.account_circle_sharp, color: Colors.white),
                 color: Colors.white),
             MyTextField(
+                controller: signupEmailController,
                 hintText: "Email",
                 prefixIcon: Icon(Icons.email, color: Colors.white),
                 color: Colors.white),
-            MyPasswordTextField(hintText: "Password", color: Colors.white),
+            MyPasswordTextField(
+                controller: signupPasswordController,
+                hintText: "Password",
+                color: Colors.white),
             Padding(
               padding: const EdgeInsets.only(top: 5),
               child: Center(
@@ -158,10 +234,11 @@ class _LaunchScreenState extends State<LaunchScreen> {
               title: MyElevatedButton(
                   text: "Sign up",
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => MyNavBar()),
-                    );
+                    signUp();
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(builder: (context) => MyNavBar()),
+                    // );
                   }),
               contentPadding: EdgeInsets.zero,
             ),
@@ -222,9 +299,10 @@ class _LaunchScreenState extends State<LaunchScreen> {
     double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Container(
-          height: double.infinity,
+          // height: double.infinity,
           decoration: BoxDecoration(
             image: DecorationImage(
               image: AssetImage("assets/images/background.jpg"),
@@ -265,10 +343,6 @@ class _LaunchScreenState extends State<LaunchScreen> {
                 } else {
                   return SizedBox();
                 }
-                // return Text(
-                //   "FFFFFFFF",
-                //   style: TextStyle(fontSize: 20, color: Colors.white),
-                // );
               }),
             ],
           ),

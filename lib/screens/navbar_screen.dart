@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
-// https://www.youtube.com/watch?v=2UG4rdsCZKU
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fitness_app/screens/account_screen.dart';
 import 'package:fitness_app/screens/create_screen.dart';
 import 'package:fitness_app/screens/homepage_screen.dart';
@@ -18,6 +17,10 @@ class MyNavBar extends StatefulWidget {
 }
 
 class _MyNavBarState extends State<MyNavBar> {
+  void signOut() async {
+    await FirebaseAuth.instance.signOut();
+  }
+
   int myIndex = 0;
   List<Widget> myPages = [
     HomePage(),
@@ -25,10 +28,13 @@ class _MyNavBarState extends State<MyNavBar> {
     WorkoutScreen(),
     LogScreen(),
     AccountScreen(),
-    LaunchScreen(),
+    // LaunchScreen(),
   ];
   @override
   Widget build(BuildContext context) {
+    // if (myIndex == 5) {
+    //   signOut();
+    // }
     return Scaffold(
       body: SafeArea(
           child: IndexedStack(
@@ -40,10 +46,11 @@ class _MyNavBarState extends State<MyNavBar> {
           // backgroundColor: Color.fromRGBO(170, 91, 67, 1),
           onTap: (value) {
             if (value == 5) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => LaunchScreen()),
-              );
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(builder: (context) => LaunchScreen()),
+              // );
+              signOut();
             } else {
               setState(() {
                 myIndex = value;
