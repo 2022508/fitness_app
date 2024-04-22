@@ -1,15 +1,15 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_const_declarations
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_const_declarations, use_build_context_synchronously
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fitness_app/components/elevated_button.dart';
 import 'package:fitness_app/components/password_text_field.dart';
 import 'package:fitness_app/components/text_field.dart';
-import 'package:flutter/foundation.dart';
+import 'package:fitness_app/services/camera_services.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
+// import 'dart:io';
 
-import 'package:path_provider/path_provider.dart';
+// import 'package:path_provider/path_provider.dart';
 
 class LaunchScreen extends StatefulWidget {
   const LaunchScreen({super.key});
@@ -26,55 +26,80 @@ class _LaunchScreenState extends State<LaunchScreen> {
   final signupEmailController = TextEditingController();
   final signupPasswordController = TextEditingController();
 
-  void signIn() async {
-    Navigator.pop(context);
+  final CameraServices cameraServices = CameraServices();
 
-    showDialog(
-        context: context,
-        builder: (context) {
-          return Center(child: CircularProgressIndicator());
-        });
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: signinEmailController.text,
-          password: signinPasswordController.text);
+  void signIn() async {
+    if (signinEmailController.text.isNotEmpty &&
+        signinPasswordController.text.isNotEmpty) {
       Navigator.pop(context);
-    } on FirebaseAuthException catch (e) {
-      Navigator.pop(context);
-      if (e.code == 'user-not-found') {
-        alertDialog(Text("No user found for that email."));
-      } else if (e.code == 'wrong-password') {
-        alertDialog(Text("Wrong password provided for that user."));
-      } else if (e.code == 'invalid-email') {
-        alertDialog(Text("Invalid email provided."));
+
+      showDialog(
+          context: context,
+          builder: (context) {
+            return Center(child: CircularProgressIndicator());
+          });
+      try {
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+            email: signinEmailController.text,
+            password: signinPasswordController.text);
+        Navigator.pop(context);
+      } on FirebaseAuthException catch (e) {
+        Navigator.pop(context);
+        if (e.code == 'user-not-found') {
+          alertDialog(Text("No user found for that email."));
+        } else if (e.code == 'wrong-password') {
+          alertDialog(Text("Wrong password provided for that user."));
+        } else if (e.code == 'invalid-email') {
+          alertDialog(Text("Invalid email provided."));
+        }
       }
+    } else {
+      alertDialog(Text("Please fill in all fields."));
+      //stops the leyboard popping back up after the dialog is closed
+      FocusManager.instance.primaryFocus?.unfocus();
     }
   }
 
   void signUp() async {
-    Navigator.pop(context);
+    if (signupNameController.text.isNotEmpty &&
+        signupEmailController.text.isNotEmpty &&
+        signupPasswordController.text.isNotEmpty &&
+        image != null) {
+      Navigator.pop(context);
 
-    showDialog(
-        context: context,
-        builder: (context) {
-          return Center(child: CircularProgressIndicator());
-        });
-    try {
-      UserCredential result = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
-              email: signupEmailController.text,
-              password: signupPasswordController.text);
-      Navigator.pop(context);
-      await result.user?.updateDisplayName(signupNameController.text);
-    } on FirebaseAuthException catch (e) {
-      Navigator.pop(context);
-      if (e.code == 'weak-password') {
-        alertDialog(Text("The password provided is too weak."));
-      } else if (e.code == 'email-already-in-use') {
-        alertDialog(Text("The account already exists for that email."));
-      } else if (e.code == 'invalid-email') {
-        alertDialog(Text("Invalid email provided."));
+      showDialog(
+          context: context,
+          builder: (context) {
+            return Center(child: CircularProgressIndicator());
+          });
+      try {
+        UserCredential result = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(
+                email: signupEmailController.text,
+                password: signupPasswordController.text);
+        Navigator.pop(context);
+        await result.user?.updateDisplayName(signupNameController.text);
+        // await result.user?.reload();
+
+        cameraServices.saveImage(image!);
+
+        //profile picture upload stuff
+      } on FirebaseAuthException catch (e) {
+        Navigator.pop(context);
+        if (e.code == 'weak-password') {
+          alertDialog(Text("The password provided is too weak."));
+        } else if (e.code == 'email-already-in-use') {
+          alertDialog(Text("The account already exists for that email."));
+        } else if (e.code == 'invalid-email') {
+          alertDialog(Text("Invalid email provided."));
+        } else {
+          alertDialog(Text("An error occured."));
+        }
       }
+    } else {
+      alertDialog(Text("Please fill in all fields."));
+      //stops the leyboard popping back up after the dialog is closed
+      FocusManager.instance.primaryFocus?.unfocus();
     }
   }
 
@@ -138,11 +163,11 @@ class _LaunchScreenState extends State<LaunchScreen> {
         Wrap(
           children: [
             MyTextField(
-                hintText: "Email",
-                controller: signinEmailController,
-                prefixIcon:
-                    Icon(Icons.account_circle_sharp, color: Colors.white),
-                color: Colors.white),
+              hintText: "Email",
+              controller: signinEmailController,
+              prefixIcon: Icon(Icons.account_circle_sharp, color: Colors.white),
+              color: Colors.white,
+            ),
             MyPasswordTextField(
                 hintText: "Password",
                 controller: signinPasswordController,
@@ -192,7 +217,6 @@ class _LaunchScreenState extends State<LaunchScreen> {
                   onPressed: signUpModalBottomSheet,
                 ),
                 contentPadding: EdgeInsets.zero),
-            ListTile(title: SizedBox(height: 40)),
           ],
         ),
         "Welcome back");
@@ -264,7 +288,6 @@ class _LaunchScreenState extends State<LaunchScreen> {
                   onPressed: logInModalBottomSheet,
                 ),
                 contentPadding: EdgeInsets.zero),
-            ListTile(title: SizedBox(height: 40)),
           ],
         ),
         "Create Account");
@@ -279,16 +302,16 @@ class _LaunchScreenState extends State<LaunchScreen> {
       setState(() {
         image = pickedImage;
       });
-      saveImage(pickedImage);
+      // saveImage(pickedImage);
     }
   }
 
-  void saveImage(XFile img) async {
-    final String path = (await getApplicationDocumentsDirectory()).path;
-    File convert = File(img.path);
-    final String fileName = "pfp.jpg";
-    final File localImage = await convert.copy('$path/$fileName');
-  }
+  // void saveImage(XFile img) async {
+  //   final String path = (await getApplicationDocumentsDirectory()).path;
+  //   File convert = File(img.path);
+  //   final String fileName = "pfp.jpg";
+  //   final File localImage = await convert.copy('$path/$fileName');
+  // }
 
   void pfpModalBottomSheet() {
     modalBottomSheet(
@@ -352,7 +375,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
                 if (isModalActive == 0) {
                   return Column(
                     children: [
-                      // SizedBox(height: height * 0.55),
+                      SizedBox(height: height * 0.55),
                       SizedBox(
                         height: height * 0.065,
                         width: width * 0.39,
@@ -372,16 +395,6 @@ class _LaunchScreenState extends State<LaunchScreen> {
                   return SizedBox();
                 }
               }),
-              // Text("data"),
-              // !kIsWeb && image != null
-              //     ? Image.file(File(image!.path))
-              //     : Container(),
-              // image != null
-              //     ? SizedBox(
-              //         height: 10,
-              //       )
-              //     : Container(),
-              // Text("data"),
             ],
           ),
         ),
