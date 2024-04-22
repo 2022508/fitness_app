@@ -42,10 +42,12 @@ class _MyPasswordTextFieldState extends State<MyPasswordTextField> {
                 onPressed: () {
                   setState(() {
                     if (isPswdVisible) {
-                      pswdVisible = Icon(Icons.visibility_outlined);
+                      pswdVisible =
+                          Icon(Icons.visibility_outlined, color: Colors.white);
                       isPswdVisible = false;
                     } else {
-                      pswdVisible = Icon(Icons.visibility_off_outlined);
+                      pswdVisible = Icon(Icons.visibility_off_outlined,
+                          color: Colors.white);
                       isPswdVisible = true;
                     }
                   });
