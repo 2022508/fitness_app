@@ -1,11 +1,15 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_const_declarations
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fitness_app/components/elevated_button.dart';
 import 'package:fitness_app/components/password_text_field.dart';
 import 'package:fitness_app/components/text_field.dart';
-import 'package:fitness_app/screens/navbar_screen.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+
+import 'package:path_provider/path_provider.dart';
 
 class LaunchScreen extends StatefulWidget {
   const LaunchScreen({super.key});
@@ -266,13 +270,35 @@ class _LaunchScreenState extends State<LaunchScreen> {
         "Create Account");
   }
 
+  final ImagePicker picker = ImagePicker();
+  XFile? image;
+
+  void getPhoto(ImageSource type) async {
+    final XFile? pickedImage = await picker.pickImage(source: type);
+    if (pickedImage != null) {
+      setState(() {
+        image = pickedImage;
+      });
+      saveImage(pickedImage);
+    }
+  }
+
+  void saveImage(XFile img) async {
+    final String path = (await getApplicationDocumentsDirectory()).path;
+    File convert = File(img.path);
+    final String fileName = "pfp.jpg";
+    final File localImage = await convert.copy('$path/$fileName');
+  }
+
   void pfpModalBottomSheet() {
     modalBottomSheet(
       Row(
         children: [
           Expanded(
             child: IconButton(
-              onPressed: () {},
+              onPressed: () {
+                getPhoto(ImageSource.camera);
+              },
               icon: Icon(
                 Icons.camera_alt,
                 size: 100,
@@ -282,7 +308,9 @@ class _LaunchScreenState extends State<LaunchScreen> {
           ),
           Expanded(
             child: IconButton(
-              onPressed: () {},
+              onPressed: () {
+                getPhoto(ImageSource.gallery);
+              },
               icon: Icon(Icons.photo, size: 100, color: Colors.white),
             ),
           )
@@ -324,7 +352,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
                 if (isModalActive == 0) {
                   return Column(
                     children: [
-                      SizedBox(height: height * 0.55),
+                      // SizedBox(height: height * 0.55),
                       SizedBox(
                         height: height * 0.065,
                         width: width * 0.39,
@@ -344,6 +372,16 @@ class _LaunchScreenState extends State<LaunchScreen> {
                   return SizedBox();
                 }
               }),
+              // Text("data"),
+              // !kIsWeb && image != null
+              //     ? Image.file(File(image!.path))
+              //     : Container(),
+              // image != null
+              //     ? SizedBox(
+              //         height: 10,
+              //       )
+              //     : Container(),
+              // Text("data"),
             ],
           ),
         ),

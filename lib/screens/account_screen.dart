@@ -1,9 +1,13 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_const_declarations
+
+import 'dart:io';
 
 import 'package:fitness_app/components/elevated_button.dart';
 import 'package:fitness_app/components/password_text_field.dart';
 import 'package:fitness_app/components/text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -15,6 +19,25 @@ class AccountScreen extends StatefulWidget {
 class _AccountScreenState extends State<AccountScreen> {
   bool isPswdVisible = true;
   Icon pswdVisible = Icon(Icons.visibility_off_outlined);
+
+  XFile? image;
+
+  void loadImage() async {
+    final String fileName = "pfp.jpg";
+    final String path = (await getApplicationDocumentsDirectory()).path;
+
+    if (File('$path/$fileName').existsSync()) {
+      setState(() {
+        image = XFile('$path/$fileName');
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadImage();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +62,8 @@ class _AccountScreenState extends State<AccountScreen> {
                 children: [
                   CircleAvatar(
                     radius: 100,
-                    backgroundImage: AssetImage('assets/images/pfp.jpg'),
+                    // backgroundImage: AssetImage('assets/images/pfp.jpg'),
+                    backgroundImage: Image.file(File(image!.path)).image,
                   ),
                   Positioned(
                     bottom: 20,
