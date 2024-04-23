@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fitness_app/components/elevated_button.dart';
 import 'package:fitness_app/components/text_field.dart';
 import 'package:fitness_app/screens/view_workouts_screen.dart';
@@ -35,7 +36,12 @@ class _CreateScreenState extends State<CreateScreen> {
   List<dynamic> docIDs = [];
 
   Future getDocId() async {
-    await fire.collection('create').get().then((querySnapshot) {
+    await fire
+        .collection(FirebaseAuth.instance.currentUser!.email!)
+        .doc('create')
+        .collection('workouts')
+        .get()
+        .then((querySnapshot) {
       docIDs.clear();
       for (var result in querySnapshot.docs) {
         docIDs.add(result.id);
@@ -43,14 +49,37 @@ class _CreateScreenState extends State<CreateScreen> {
     });
   }
 
+  // Future setWorkoutData() async {
+  //   await fire.collection('create').doc(nameController.text).set({
+  //     exerciseController.text: {
+  //       "reps": FieldValue.arrayUnion([double.parse(repsController.text)]),
+  //       "weight": FieldValue.arrayUnion([double.parse(weightController.text)])
+  //     },
+  //     "dateTime": Timestamp.now()
+  //   }, SetOptions(merge: true));
+  // }
+
   Future setWorkoutData() async {
-    await fire.collection('create').doc(nameController.text).set({
+    await fire
+        .collection(FirebaseAuth.instance.currentUser!.email!)
+        .doc('create')
+        .collection('workouts')
+        .doc(nameController.text)
+        .set({
       exerciseController.text: {
         "reps": FieldValue.arrayUnion([double.parse(repsController.text)]),
         "weight": FieldValue.arrayUnion([double.parse(weightController.text)])
       },
       "dateTime": Timestamp.now()
     }, SetOptions(merge: true));
+    clearFields();
+  }
+
+  void clearFields() {
+    nameController.clear();
+    exerciseController.clear();
+    weightController.clear();
+    repsController.clear();
   }
 
   @override
