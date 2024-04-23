@@ -5,3 +5,4 @@ https://www.youtube.com/watch?v=2UG4rdsCZKU
 https://stackoverflow.com/questions/55579906/how-to-count-items-occurence-in-a-list
 https://www.youtube.com/watch?v=fJtFDrjEvE8
 https://www.youtube.com/watch?v=rTr8BUlUftg
+https://stackoverflow.com/questions/69501224/flutterfire-update-array-instead-of-replacing-it
