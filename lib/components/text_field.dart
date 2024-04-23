@@ -6,6 +6,7 @@ class MyTextField extends StatelessWidget {
   final String hintText;
   final TextEditingController? controller;
   final Icon prefixIcon;
+  final IconButton? suffixIcon;
   final bool? readOnly;
   final Color? color;
   const MyTextField(
@@ -13,6 +14,7 @@ class MyTextField extends StatelessWidget {
       required this.hintText,
       this.controller,
       required this.prefixIcon,
+      this.suffixIcon,
       this.readOnly,
       this.color});
 
@@ -26,6 +28,7 @@ class MyTextField extends StatelessWidget {
         readOnly: readOnly ?? false,
         decoration: InputDecoration(
           prefixIcon: prefixIcon,
+          suffixIcon: suffixIcon,
           hintText: hintText,
           hintStyle: TextStyle(color: color ?? Colors.black),
           enabledBorder: UnderlineInputBorder(

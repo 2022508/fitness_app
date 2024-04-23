@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fitness_app/screens/account_screen.dart';
 import 'package:fitness_app/screens/create_screen.dart';
 import 'package:fitness_app/screens/homepage_screen.dart';
-import 'package:fitness_app/screens/launch_screen.dart';
 import 'package:fitness_app/screens/log_screen.dart';
 import 'package:fitness_app/screens/workout_screen.dart';
 import 'package:flutter/material.dart';
@@ -28,13 +27,9 @@ class _MyNavBarState extends State<MyNavBar> {
     WorkoutScreen(),
     LogScreen(),
     AccountScreen(),
-    // LaunchScreen(),
   ];
   @override
   Widget build(BuildContext context) {
-    // if (myIndex == 5) {
-    //   signOut();
-    // }
     return Scaffold(
       body: SafeArea(
           child: IndexedStack(
