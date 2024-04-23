@@ -8,8 +8,6 @@ import 'package:fitness_app/services/camera_services.dart';
 import 'package:fitness_app/services/database_services.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-// import 'dart:io';
-
 import 'package:path_provider/path_provider.dart';
 
 class LaunchScreen extends StatefulWidget {
@@ -47,8 +45,8 @@ class _LaunchScreenState extends State<LaunchScreen> {
           });
       try {
         await FirebaseAuth.instance.signInWithEmailAndPassword(
-            email: signinEmailController.text,
-            password: signinPasswordController.text);
+            email: signinEmailController.text.trim(),
+            password: signinPasswordController.text.trim());
         Navigator.pop(context);
       } on FirebaseAuthException catch (e) {
         Navigator.pop(context);
@@ -85,7 +83,6 @@ class _LaunchScreenState extends State<LaunchScreen> {
                 email: signupEmailController.text,
                 password: signupPasswordController.text);
         Navigator.pop(context);
-        // await result.user?.reload();
         await _saveUserDetails();
 
         await cameraServices.saveImage(image!, signupEmailController.text);
@@ -138,7 +135,6 @@ class _LaunchScreenState extends State<LaunchScreen> {
               padding: EdgeInsets.only(
                   left: 8,
                   right: 8,
-                  top: 8,
                   bottom: MediaQuery.of(context).viewInsets.bottom),
               child: widget);
         });
@@ -156,7 +152,6 @@ class _LaunchScreenState extends State<LaunchScreen> {
         }
       });
     });
-    // await Future.delayed(const Duration(microseconds: 120000));
     setState(() {
       isModalActive += 1;
     });
@@ -182,7 +177,6 @@ class _LaunchScreenState extends State<LaunchScreen> {
                 hintText: "Password",
                 controller: signinPasswordController,
                 color: Colors.white),
-
             Row(
               children: [
                 Spacer(),
@@ -194,16 +188,11 @@ class _LaunchScreenState extends State<LaunchScreen> {
                     )),
               ],
             ),
-            // MyListTile(widget: MyElevatedButton(text: "Log in")),
             ListTile(
               title: MyElevatedButton(
                   text: "Sign in",
                   onPressed: () {
                     signIn();
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(builder: (context) => MyNavBar()),
-                    // );
                   }),
               contentPadding: EdgeInsets.zero,
             ),
@@ -273,10 +262,6 @@ class _LaunchScreenState extends State<LaunchScreen> {
                   text: "Sign up",
                   onPressed: () {
                     signUp();
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(builder: (context) => MyNavBar()),
-                    // );
                   }),
               contentPadding: EdgeInsets.zero,
             ),
@@ -312,16 +297,8 @@ class _LaunchScreenState extends State<LaunchScreen> {
       setState(() {
         image = pickedImage;
       });
-      // saveImage(pickedImage);
     }
   }
-
-  // void saveImage(XFile img) async {
-  //   final String path = (await getApplicationDocumentsDirectory()).path;
-  //   File convert = File(img.path);
-  //   final String fileName = "pfp.jpg";
-  //   final File localImage = await convert.copy('$path/$fileName');
-  // }
 
   void pfpModalBottomSheet() {
     modalBottomSheet(
@@ -372,7 +349,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
           ),
           child: Column(
             children: [
-              SizedBox(height: height * 0.13),
+              SizedBox(height: height * 0.07),
               Align(
                 alignment: Alignment.center,
                 child: Text(title,
@@ -385,7 +362,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
                 if (isModalActive == 0) {
                   return Column(
                     children: [
-                      SizedBox(height: height * 0.55),
+                      SizedBox(height: height * 0.57),
                       SizedBox(
                         height: height * 0.065,
                         width: width * 0.39,
