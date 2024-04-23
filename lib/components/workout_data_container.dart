@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 
 class MyWorkoutData extends StatelessWidget {
   final String exercise;
-  final List<double> reps;
-  final List<double> weight;
+  final List<dynamic> reps;
+  final List<dynamic> weight;
 
   const MyWorkoutData(
       {super.key,
@@ -31,7 +31,7 @@ class MyWorkoutData extends StatelessWidget {
       child: Row(
         children: [
           Container(
-              width: width * 0.53,
+              width: width * 0.33,
               decoration: BoxDecoration(
                 color: Colors.grey[200],
                 borderRadius: BorderRadius.circular(10.0),

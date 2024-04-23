@@ -3,14 +3,12 @@
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:fitness_app/components/elevated_button.dart';
 import 'package:fitness_app/components/password_text_field.dart';
 import 'package:fitness_app/components/text_field.dart';
 import 'package:fitness_app/services/camera_services.dart';
 import 'package:fitness_app/services/database_services.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -37,7 +35,6 @@ class _AccountScreenState extends State<AccountScreen> {
 
     final String path = _getData['path'];
     final String fileName = _getData['email'];
-    // final String path = (await getApplicationDocumentsDirectory()).path;
 
     if (File('$path/$fileName').existsSync()) {
       setState(() {
