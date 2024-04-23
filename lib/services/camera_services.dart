@@ -6,13 +6,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 
 class CameraServices {
-  final ImagePicker picker = ImagePicker();
-  XFile? image;
-
-  void saveImage(XFile img) async {
+  Future<void> saveImage(XFile img, String email) async {
     final String path = (await getApplicationDocumentsDirectory()).path;
     File convert = File(img.path);
-    final String fileName = "pfp.jpg";
-    final File localImage = await convert.copy('$path/$fileName');
+    final File localImage = await convert.copy('$path/$email');
   }
 }

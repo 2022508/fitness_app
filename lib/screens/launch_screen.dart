@@ -5,11 +5,12 @@ import 'package:fitness_app/components/elevated_button.dart';
 import 'package:fitness_app/components/password_text_field.dart';
 import 'package:fitness_app/components/text_field.dart';
 import 'package:fitness_app/services/camera_services.dart';
+import 'package:fitness_app/services/database_services.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 // import 'dart:io';
 
-// import 'package:path_provider/path_provider.dart';
+import 'package:path_provider/path_provider.dart';
 
 class LaunchScreen extends StatefulWidget {
   const LaunchScreen({super.key});
@@ -28,7 +29,13 @@ class _LaunchScreenState extends State<LaunchScreen> {
 
   final CameraServices cameraServices = CameraServices();
 
-  void signIn() async {
+  Future<void> _saveUserDetails() async {
+    final path = (await getApplicationDocumentsDirectory()).path;
+
+    await DatabaseServices.addUserDetails(signupEmailController.text, path);
+  }
+
+  Future<void> signIn() async {
     if (signinEmailController.text.isNotEmpty &&
         signinPasswordController.text.isNotEmpty) {
       Navigator.pop(context);
@@ -60,7 +67,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
     }
   }
 
-  void signUp() async {
+  Future signUp() async {
     if (signupNameController.text.isNotEmpty &&
         signupEmailController.text.isNotEmpty &&
         signupPasswordController.text.isNotEmpty &&
@@ -78,10 +85,11 @@ class _LaunchScreenState extends State<LaunchScreen> {
                 email: signupEmailController.text,
                 password: signupPasswordController.text);
         Navigator.pop(context);
-        await result.user?.updateDisplayName(signupNameController.text);
         // await result.user?.reload();
+        await _saveUserDetails();
 
-        cameraServices.saveImage(image!);
+        await cameraServices.saveImage(image!, signupEmailController.text);
+        await result.user?.updateDisplayName(signupNameController.text);
 
         //profile picture upload stuff
       } on FirebaseAuthException catch (e) {
@@ -136,6 +144,8 @@ class _LaunchScreenState extends State<LaunchScreen> {
         });
       },
     ).then((value) async {
+      FocusManager.instance.primaryFocus?.unfocus();
+
       await Future.delayed(const Duration(microseconds: 130000));
 
       setState(() {
@@ -296,7 +306,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
   final ImagePicker picker = ImagePicker();
   XFile? image;
 
-  void getPhoto(ImageSource type) async {
+  Future<void> getPhoto(ImageSource type) async {
     final XFile? pickedImage = await picker.pickImage(source: type);
     if (pickedImage != null) {
       setState(() {

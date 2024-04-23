@@ -6,6 +6,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fitness_app/components/elevated_button.dart';
 import 'package:fitness_app/components/password_text_field.dart';
 import 'package:fitness_app/components/text_field.dart';
+import 'package:fitness_app/services/camera_services.dart';
+import 'package:fitness_app/services/database_services.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -20,17 +22,26 @@ class AccountScreen extends StatefulWidget {
 class _AccountScreenState extends State<AccountScreen> {
   bool isPswdVisible = true;
   Icon pswdVisible = Icon(Icons.visibility_off_outlined);
+  bool isImageLoaded = false;
+  bool isUserLoaded = false;
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+  final CameraServices cameraServices = CameraServices();
 
   XFile? image;
 
-  void loadImage() async {
-    final String fileName = "pfp.jpg";
-    final String path = (await getApplicationDocumentsDirectory()).path;
+  Future<void> loadImage() async {
+    Map<String, dynamic> _getData =
+        await DatabaseServices.getUsersDetailsByEmail(
+            FirebaseAuth.instance.currentUser!.email!);
+
+    final String path = _getData['path'];
+    final String fileName = _getData['email'];
+    // final String path = (await getApplicationDocumentsDirectory()).path;
 
     if (File('$path/$fileName').existsSync()) {
       setState(() {
+        isImageLoaded = true;
         image = XFile('$path/$fileName');
       });
     }
@@ -60,21 +71,15 @@ class _AccountScreenState extends State<AccountScreen> {
 
   final ImagePicker picker = ImagePicker();
 
-  void getPhoto(ImageSource type) async {
+  Future<void> getPhoto(ImageSource type) async {
     final XFile? pickedImage = await picker.pickImage(source: type);
     if (pickedImage != null) {
       setState(() {
         image = pickedImage;
       });
-      saveImage(pickedImage);
+      cameraServices.saveImage(
+          pickedImage, FirebaseAuth.instance.currentUser!.email!);
     }
-  }
-
-  void saveImage(XFile img) async {
-    final String path = (await getApplicationDocumentsDirectory()).path;
-    File convert = File(img.path);
-    final String fileName = "pfp.jpg";
-    final File localImage = await convert.copy('$path/$fileName');
   }
 
   void pfpModalBottomSheet() {
@@ -108,13 +113,14 @@ class _AccountScreenState extends State<AccountScreen> {
     );
   }
 
-  void getUser() async {
+  Future<void> getUser() async {
     var user = await FirebaseAuth.instance.currentUser;
     if (user != null) {
       await user.reload();
       user = await FirebaseAuth.instance.currentUser;
 
       setState(() {
+        isUserLoaded = true;
         nameController.text = user!.displayName!;
         emailController.text = user.email!;
       });
@@ -139,71 +145,68 @@ class _AccountScreenState extends State<AccountScreen> {
           child: Center(
               child: Column(
             children: [
-              // IconButton(
-              //   style: ButtonStyle(),
-              //   icon: CircleAvatar(
-              //     radius: 100,
-              //     backgroundImage: AssetImage('assets/images/pfp.jpg'),
-              //   ),
-              //   onPressed: () {},
-              // ),
-              SizedBox(height: 10),
-              Stack(
-                children: [
-                  // CircleAvatar(
-                  //     radius: 100,
-                  //     //   // backgroundImage: AssetImage('assets/images/pfp.jpg'),
-
-                  //     backgroundImage: Image.file(File(image!.path)).image),
-                  CircleAvatar(
-                    radius: 100,
-                    backgroundImage: image == null
-                        ? AssetImage('assets/images/pfp.jpg')
-                        : Image.file(File(image!.path)).image,
-                  ),
-                  Positioned(
-                    bottom: 20,
-                    right: 20,
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.add_a_photo,
-                        color: Colors.red.withOpacity(0.7),
-                        size: 30,
-                      ),
-                      onPressed: pfpModalBottomSheet,
+              if (isImageLoaded)
+                Stack(
+                  children: [
+                    SizedBox(height: 10),
+                    CircleAvatar(
+                      radius: 100,
+                      backgroundImage: image == null
+                          ? AssetImage('assets/images/pfp.jpg')
+                          : Image.file(File(image!.path)).image,
                     ),
-                  ),
-                ],
-              ),
+                    Positioned(
+                      bottom: 20,
+                      right: 20,
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.add_a_photo,
+                          color: Colors.red.withOpacity(0.7),
+                          size: 30,
+                        ),
+                        onPressed: pfpModalBottomSheet,
+                      ),
+                    ),
+                  ],
+                )
+              else
+                Center(child: CircularProgressIndicator()),
               SizedBox(height: 20),
-              MyTextField(
-                  controller: nameController,
-                  hintText: "Name",
-                  prefixIcon: Icon(Icons.account_circle_sharp),
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.upload),
-                    onPressed: () {},
-                  )),
-              MyTextField(
-                  controller: emailController,
-                  hintText: "email@gmail.com",
-                  prefixIcon: Icon(Icons.email)),
-              MyPasswordTextField(
-                hintText: "Old password",
-                color: Colors.black,
-                prefixIcon: Icon(Icons.lock),
-              ),
-              MyPasswordTextField(
-                hintText: "New password",
-                color: Colors.black,
-                prefixIcon: Icon(Icons.lock),
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.upload),
-                  onPressed: () {},
-                ),
-              ),
-              SizedBox(height: 20),
-              MyElevatedButton(text: "Make changes")
+              if (isUserLoaded)
+                Column(
+                  children: [
+                    MyTextField(
+                        controller: nameController,
+                        hintText: "Name",
+                        prefixIcon: Icon(Icons.account_circle_sharp),
+                        suffixIcon: IconButton(
+                          icon: Icon(Icons.upload),
+                          onPressed: () {},
+                        )),
+                    MyTextField(
+                        controller: emailController,
+                        hintText: "email@gmail.com",
+                        prefixIcon: Icon(Icons.email)),
+                    MyPasswordTextField(
+                      hintText: "Old password",
+                      color: Colors.black,
+                      prefixIcon: Icon(Icons.lock),
+                    ),
+                    MyPasswordTextField(
+                      hintText: "New password",
+                      color: Colors.black,
+                      prefixIcon: Icon(Icons.lock),
+                      suffixIcon: IconButton(
+                        icon: Icon(Icons.upload),
+                        onPressed: () {},
+                      ),
+                    ),
+                    // SizedBox(height: 20),
+                    // MyElevatedButton(text: "Make changes")
+                  ],
+                )
+              else
+                Center(child: CircularProgressIndicator()),
             ],
           )),
         ),
