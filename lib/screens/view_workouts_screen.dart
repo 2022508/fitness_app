@@ -1,9 +1,11 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fitness_app/components/workout_data_container.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer';
+import 'package:intl/intl.dart';
 
 class ViewWorkoutsScreen extends StatelessWidget {
   final String workoutName;
@@ -13,7 +15,12 @@ class ViewWorkoutsScreen extends StatelessWidget {
   final Map<String, dynamic> workoutData = {};
 
   Future getWorkoutData() async {
-    await fire.collection('create').get().then((querySnapshot) {
+    await fire
+        .collection(FirebaseAuth.instance.currentUser!.email!)
+        .doc('create')
+        .collection('workouts')
+        .get()
+        .then((querySnapshot) {
       for (var result in querySnapshot.docs) {
         workoutData.addAll({result.id: result.data() as Map<String, dynamic>});
       }
@@ -35,6 +42,8 @@ class ViewWorkoutsScreen extends StatelessWidget {
               future: getWorkoutData(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
+                  Timestamp map = workoutData[workoutName].values.elementAt(0);
+                  final f = DateFormat('hh:mm dd/MM/yy');
                   return Container(
                     margin: EdgeInsets.all(10),
                     padding: EdgeInsets.all(10),
@@ -49,7 +58,7 @@ class ViewWorkoutsScreen extends StatelessWidget {
                     child: Column(
                       children: [
                         Text(
-                          workoutName,
+                          '$workoutName (${f.format(map.toDate())})',
                           style: TextStyle(
                             fontSize: 25,
                             fontWeight: FontWeight.w500,
