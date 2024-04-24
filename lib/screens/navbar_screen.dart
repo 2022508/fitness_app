@@ -8,6 +8,9 @@ import 'package:fitness_app/screens/log_screen.dart';
 import 'package:fitness_app/screens/workout_screen.dart';
 import 'package:flutter/material.dart';
 
+// https://www.youtube.com/watch?v=2UG4rdsCZKU
+// used to help create the bottom navigation bar
+
 class MyNavBar extends StatefulWidget {
   const MyNavBar({super.key});
 

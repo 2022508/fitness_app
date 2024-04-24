@@ -7,6 +7,9 @@ import 'package:fitness_app/components/text_field.dart';
 import 'package:fitness_app/screens/view_workouts_screen.dart';
 import 'package:flutter/material.dart';
 
+// https://stackoverflow.com/questions/69501224/flutterfire-update-array-instead-of-replacing-it
+// used to set the data for the workouts into firebase
+
 class CreateScreen extends StatefulWidget {
   const CreateScreen({super.key});
 
@@ -75,6 +78,7 @@ class _CreateScreenState extends State<CreateScreen> {
             );
           });
     }
+    FocusManager.instance.primaryFocus?.unfocus();
     setState(() {});
   }
 

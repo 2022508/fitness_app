@@ -6,6 +6,9 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'dart:developer';
 
+// https://pub.dev/packages/speech_to_text
+// package and its documentation used for voice search
+
 class SupportPage extends StatefulWidget {
   const SupportPage({super.key});
 
@@ -51,6 +54,7 @@ class _SupportPageState extends State<SupportPage> {
       log(exercisesList.toString());
     });
     controller.clear();
+    FocusManager.instance.primaryFocus?.unfocus();
     setState(() {});
   }
 
@@ -60,17 +64,15 @@ class _SupportPageState extends State<SupportPage> {
     }
   }
 
-  // @override
-  // void initState() async {
-  //   super.initState();
-  //   await getInfo();
-  // }
+  @override
+  void initState() {
+    super.initState();
+    getInfo();
+  }
 
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-
-    // getInfo();
     return Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(
@@ -81,6 +83,10 @@ class _SupportPageState extends State<SupportPage> {
                 children: [
                   TextField(
                     controller: controller,
+                    textInputAction: TextInputAction.go,
+                    onSubmitted: (String value) {
+                      getInfo();
+                    },
                     style: TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
@@ -107,11 +113,6 @@ class _SupportPageState extends State<SupportPage> {
                         fontSize: 30,
                         fontWeight: FontWeight.bold,
                       ),
-                      // focusedBorder: UnderlineInputBorder(
-                      //   borderSide: BorderSide(
-                      //     color: Colors.black,
-                      //   ),
-                      // ),
                     ),
                   ),
                   Container(
@@ -123,15 +124,8 @@ class _SupportPageState extends State<SupportPage> {
                       itemCount: exercisesList.length,
                       itemBuilder: (context, index) {
                         return ListTile(
-                          // title: Text(exercisesList[index].key),
-                          // subtitle: Text(
-                          //     exercisesList[exercisesList[index].values]
-                          //         ['description']),
                           title: Text(
                               exercisesList.keys.elementAt(index).toString()),
-                          // subtitle: Text(exercisesList.values
-                          //     .elementAt(index)['link']
-                          //     .toString()),
                           subtitle: TextButton(
                               onPressed: () {
                                 _launchUrl(Uri.parse(exercisesList.values

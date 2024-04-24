@@ -1,5 +1,14 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_const_declarations, use_build_context_synchronously
 
+// https://www.youtube.com/watch?v=_3W-JuIVFlg
+// used for the log in and log out system
+
+// https://stackoverflow.com/questions/53869078/how-to-move-bottomsheet-along-with-keyboard-which-has-textfieldautofocused-is-t
+// used so the modal bottom sheet wouldnt be covered by the keyboard
+
+// https://stackoverflow.com/questions/52414629/how-to-update-state-of-a-modalbottomsheet-in-flutter
+// used to update the state of the modal bottom sheet for the title
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fitness_app/components/elevated_button.dart';
 import 'package:fitness_app/components/password_text_field.dart';

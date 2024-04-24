@@ -89,6 +89,8 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
             );
           });
     }
+    FocusManager.instance.primaryFocus?.unfocus();
+
     setState(() {});
   }
 
@@ -181,7 +183,13 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                         children: [
                           Expanded(
                               child: MyElevatedButton(
-                                  onPressed: setWorkoutData, text: "Add"))
+                                  // onPressed: () {
+                                  //   setWorkoutData();
+                                  //   FocusManager.instance.primaryFocus
+                                  //       ?.unfocus();
+                                  // },
+                                  onPressed: setWorkoutData,
+                                  text: "Add"))
                         ],
                       ),
                     ],
