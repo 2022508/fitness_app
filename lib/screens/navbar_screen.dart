@@ -3,7 +3,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fitness_app/screens/account_screen.dart';
 import 'package:fitness_app/screens/create_screen.dart';
-import 'package:fitness_app/screens/homepage_screen.dart';
+import 'package:fitness_app/screens/support_screen.dart';
 import 'package:fitness_app/screens/log_screen.dart';
 import 'package:fitness_app/screens/workout_screen.dart';
 import 'package:flutter/material.dart';
@@ -22,10 +22,10 @@ class _MyNavBarState extends State<MyNavBar> {
 
   int myIndex = 0;
   List<Widget> myPages = [
-    HomePage(),
-    CreateScreen(),
     WorkoutScreen(),
+    CreateScreen(),
     LogScreen(),
+    SupportPage(),
     AccountScreen(),
   ];
   @override
@@ -52,11 +52,12 @@ class _MyNavBarState extends State<MyNavBar> {
           unselectedItemColor: Colors.black,
           type: BottomNavigationBarType.fixed,
           items: [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-            BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Create'),
             BottomNavigationBarItem(
                 icon: Icon(Icons.fitness_center), label: 'Workout'),
+            BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Create'),
             BottomNavigationBarItem(icon: Icon(Icons.create), label: 'Log'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.contact_support), label: 'Support'),
             BottomNavigationBarItem(
                 icon: Icon(Icons.account_circle_rounded), label: 'Account'),
             BottomNavigationBarItem(icon: Icon(Icons.logout), label: 'Logout'),
