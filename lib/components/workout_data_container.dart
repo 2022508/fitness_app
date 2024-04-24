@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 
 class MyWorkoutData extends StatelessWidget {
   final String exercise;
+  final String notes;
   final List<dynamic> reps;
   final List<dynamic> weight;
 
   const MyWorkoutData(
       {super.key,
       required this.exercise,
+      required this.notes,
       required this.reps,
       required this.weight});
 
@@ -20,37 +22,49 @@ class MyWorkoutData extends StatelessWidget {
     TextStyle exerciseTextStyle =
         TextStyle(fontSize: 25, fontWeight: FontWeight.w500);
     TextStyle dataTextStyle =
-        TextStyle(fontSize: 17, fontWeight: FontWeight.w400, height: 1);
+        TextStyle(fontSize: 14, fontWeight: FontWeight.w400, height: 1);
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey,
+        color: Colors.grey[400],
         borderRadius: BorderRadius.circular(10.0),
       ),
       padding: EdgeInsets.all(paddingWidth),
+      margin: EdgeInsets.only(bottom: 10),
       child: Row(
         children: [
           Container(
-              width: width * 0.33,
+              width: width * 0.47,
               decoration: BoxDecoration(
-                color: Colors.grey[200],
                 borderRadius: BorderRadius.circular(10.0),
-                border: Border.all(
-                  color: Colors.black.withOpacity(0.7),
-                  width: width * 0.01,
-                ),
               ),
-              child: Text(exercise, style: exerciseTextStyle)),
+              child: Row(
+                children: [
+                  Text(exercise, style: exerciseTextStyle),
+                  Spacer(),
+                  IconButton(
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text(notes),
+                            );
+                          });
+                    },
+                    icon: Icon(
+                      Icons.notes,
+                      color: Colors.blue,
+                      size: 30,
+                    ),
+                  ),
+                ],
+              )),
           SizedBox(width: width * 0.03),
           Container(
             width: width * 0.34,
             decoration: BoxDecoration(
-              color: Colors.grey[200],
               borderRadius: BorderRadius.circular(10.0),
-              border: Border.all(
-                color: Colors.black.withOpacity(0.7),
-                width: width * 0.01,
-              ),
             ),
             child: Padding(
               padding: EdgeInsets.only(left: paddingWidth),

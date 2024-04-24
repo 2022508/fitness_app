@@ -9,7 +9,9 @@ import 'package:intl/intl.dart';
 
 class ViewWorkoutsScreen extends StatelessWidget {
   final String workoutName;
-  ViewWorkoutsScreen({super.key, required this.workoutName});
+  final String database;
+  ViewWorkoutsScreen(
+      {super.key, required this.workoutName, required this.database});
 
   final fire = FirebaseFirestore.instance;
   final Map<String, dynamic> workoutData = {};
@@ -17,12 +19,12 @@ class ViewWorkoutsScreen extends StatelessWidget {
   Future getWorkoutData() async {
     await fire
         .collection(FirebaseAuth.instance.currentUser!.email!)
-        .doc('create')
+        .doc(database)
         .collection('workouts')
         .get()
         .then((querySnapshot) {
       for (var result in querySnapshot.docs) {
-        workoutData.addAll({result.id: result.data() as Map<String, dynamic>});
+        workoutData.addAll({result.id: result.data()});
       }
     });
     log(workoutData.toString());
@@ -30,10 +32,19 @@ class ViewWorkoutsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String date;
+    String title;
+    if (database == 'log') {
+      title = DateFormat('hh:mm dd/MM/yy').format(DateTime.parse(workoutName));
+    } else {
+      title = workoutName;
+    }
     return Scaffold(
       appBar: AppBar(
-        title: Text(workoutName),
-      ),
+          centerTitle: true,
+          title: Text(
+            title,
+          )),
       body: SafeArea(
         child: SingleChildScrollView(
             child: Column(
@@ -42,8 +53,6 @@ class ViewWorkoutsScreen extends StatelessWidget {
               future: getWorkoutData(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
-                  Timestamp map = workoutData[workoutName].values.elementAt(0);
-                  final f = DateFormat('hh:mm dd/MM/yy');
                   return Container(
                     margin: EdgeInsets.all(10),
                     padding: EdgeInsets.all(10),
@@ -58,7 +67,8 @@ class ViewWorkoutsScreen extends StatelessWidget {
                     child: Column(
                       children: [
                         Text(
-                          '$workoutName (${f.format(map.toDate())})',
+                          DateFormat('hh:mm dd/MM/yy').format(DateTime.parse(
+                              workoutData[workoutName].values.elementAt(0))),
                           style: TextStyle(
                             fontSize: 25,
                             fontWeight: FontWeight.w500,
@@ -69,15 +79,19 @@ class ViewWorkoutsScreen extends StatelessWidget {
                             i < workoutData[workoutName].length;
                             i++)
                           MyWorkoutData(
-                            exercise:
-                                workoutData[workoutName].keys.elementAt(i),
-                            reps: workoutData[workoutName]
-                                    [workoutData[workoutName].keys.elementAt(i)]
-                                ['reps'],
-                            weight: workoutData[workoutName]
-                                    [workoutData[workoutName].keys.elementAt(i)]
-                                ['weight'],
-                          )
+                              exercise:
+                                  workoutData[workoutName].keys.elementAt(i),
+                              reps: workoutData[workoutName]
+                                      [workoutData[workoutName].keys.elementAt(i)]
+                                  ['reps'],
+                              weight: workoutData[workoutName]
+                                      [workoutData[workoutName].keys.elementAt(i)]
+                                  ['weight'],
+                              notes: workoutData[workoutName][
+                                      workoutData[workoutName]
+                                          .keys
+                                          .elementAt(i)]['notes'] ??
+                                  ''),
                       ],
                     ),
                   );

@@ -1,10 +1,14 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_print
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fitness_app/components/elevated_button.dart';
 import 'package:fitness_app/components/text_field.dart';
-import 'package:fitness_app/components/workout_data_container.dart';
-import 'package:fitness_app/services/workout_data_services.dart';
+import 'package:fitness_app/screens/view_workouts_screen.dart';
 import 'package:flutter/material.dart';
+import 'dart:developer';
+
+import 'package:intl/intl.dart';
 
 class WorkoutScreen extends StatefulWidget {
   const WorkoutScreen({super.key});
@@ -14,50 +18,83 @@ class WorkoutScreen extends StatefulWidget {
 }
 
 class _WorkoutScreenState extends State<WorkoutScreen> {
+  TextEditingController exerciseController = TextEditingController();
+  TextEditingController weightController = TextEditingController();
+  TextEditingController repsController = TextEditingController();
+  TextEditingController notesController = TextEditingController();
+  var fire = FirebaseFirestore.instance;
+  void clearFields() {
+    exerciseController.clear();
+    weightController.clear();
+    repsController.clear();
+    notesController.clear();
+  }
+
+  List<dynamic> docIDs = [];
+
+  Future getDocId() async {
+    await fire
+        .collection(FirebaseAuth.instance.currentUser!.email!)
+        .doc('log')
+        .collection('workouts')
+        .get()
+        .then((querySnapshot) {
+      docIDs.clear();
+      for (var result in querySnapshot.docs) {
+        docIDs.add(result.id);
+      }
+    });
+    log(docIDs.toString());
+  }
+
+  Future setWorkoutData() async {
+    if (exerciseController.text.isNotEmpty &&
+        weightController.text.isNotEmpty &&
+        repsController.text.isNotEmpty) {
+      DateTime lastWorkoutTime;
+      DateTime finalTimeStamp = DateTime.now();
+      bool isSameWorkout = false;
+
+      await getDocId();
+      if (docIDs.isNotEmpty) {
+        lastWorkoutTime = DateTime.parse(docIDs.last);
+
+        if (DateTime.now().difference(lastWorkoutTime).inHours < 4) {
+          finalTimeStamp = lastWorkoutTime;
+          isSameWorkout = true;
+        }
+      }
+      await fire
+          .collection(FirebaseAuth.instance.currentUser!.email!)
+          .doc('log')
+          .collection('workouts')
+          .doc(finalTimeStamp.toString())
+          .set({
+        exerciseController.text: {
+          "reps": FieldValue.arrayUnion([double.parse(repsController.text)]),
+          "weight":
+              FieldValue.arrayUnion([double.parse(weightController.text)]),
+          if (notesController.text.isNotEmpty) "notes": notesController.text,
+        },
+        if (isSameWorkout != true) "dateTime": DateTime.now().toString()
+        // "dateTime": Timestamp.now()
+      }, SetOptions(merge: true));
+      clearFields();
+    } else {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text("Not all fields are filled out!"),
+            );
+          });
+    }
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-
-    List<WorkoutDataService> workoutData = [
-      WorkoutDataService(exercise: "Bench Press", reps: 1, weight: 60),
-      WorkoutDataService(exercise: "Bench Press", reps: 2, weight: 60),
-      WorkoutDataService(exercise: "Bench Press", reps: 3, weight: 55),
-      WorkoutDataService(exercise: "Leg Press", reps: 4, weight: 80),
-      WorkoutDataService(exercise: "Leg Press", reps: 5, weight: 80),
-      WorkoutDataService(exercise: "Leg Press", reps: 6, weight: 80),
-      WorkoutDataService(exercise: "Squats", reps: 7, weight: 40),
-      WorkoutDataService(exercise: "Squats", reps: 8, weight: 40),
-      WorkoutDataService(exercise: "Squats", reps: 9, weight: 40),
-    ];
-
-    Map<String, List<double>> map2 = {};
-    List<double> reps = [];
-    List<double> weight = [];
-    bool isReps = true;
-    for (var element in workoutData) {
-      if (!map2.containsKey(element.exercise)) {
-        map2[element.exercise] = [element.reps, element.weight];
-      } else {
-        map2[element.exercise]?.add(element.reps);
-        map2[element.exercise]?.add(element.weight);
-      }
-    }
-    try {
-      for (var element in map2.entries) {
-        for (var data in element.value) {
-          if (isReps) {
-            reps.add(data);
-            isReps = false;
-          } else {
-            weight.add(data);
-            isReps = true;
-          }
-        }
-      }
-    } catch (e) {
-      print(e);
-    }
-
     return Scaffold(
         body: SafeArea(
             child: SingleChildScrollView(
@@ -74,95 +111,111 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Enter',
-                        style: TextStyle(
-                          fontSize: 35,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      // Divider(
-                      //   height: 2,
-                      // ),
-                      // SizedBox(height: 10),
-                      DropdownButtonFormField(
-                        value: "0",
-                        items: <DropdownMenuItem<String>>[
-                          DropdownMenuItem<String>(
-                            value: "0",
-                            child: Text("Bench Press"),
-                          ),
-                          DropdownMenuItem<String>(
-                            value: "1",
-                            child: Text("Leg Press"),
-                          ),
-                        ],
-                        onChanged: (value) {},
-                      ),
-                      // unsure which form to go with for the exercise name
-                      Row(
-                        children: [
-                          Expanded(
+                      Text('Enter',
+                          style: TextStyle(
+                              fontSize: 35, fontWeight: FontWeight.w400)),
+                      SizedBox(height: 10),
+                      Row(children: [
+                        Expanded(
                             child: MyTextField(
-                                hintText: "Exercise Name",
-                                prefixIcon: Icon(Icons.fitness_center)),
-                          ),
-                        ],
-                      ),
+                                controller: exerciseController,
+                                hintText: "Exercise",
+                                prefixIcon: Icon(Icons.fitness_center)))
+                      ]),
                       SizedBox(height: 10),
                       Row(
                         children: [
                           Expanded(
-                            child: MyTextField(
-                                hintText: "Weight",
-                                prefixIcon: Icon(Icons.fitness_center)),
-                          ),
+                              child: MyTextField(
+                                  controller: weightController,
+                                  hintText: "Weight",
+                                  prefixIcon: Icon(Icons.fitness_center))),
                           SizedBox(width: 10),
                           Expanded(
-                            child: MyTextField(
-                                hintText: "Reps",
-                                prefixIcon: Icon(Icons.repeat)),
-                          ),
+                              child: MyTextField(
+                                  controller: repsController,
+                                  hintText: "Reps",
+                                  prefixIcon: Icon(Icons.fitness_center))),
                         ],
                       ),
                       Row(
                         children: [
                           Spacer(),
                           TextButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        contentPadding: EdgeInsets.all(5),
+                                        title: Text("Notes"),
+                                        content: TextField(
+                                            controller: notesController,
+                                            keyboardType:
+                                                TextInputType.multiline,
+                                            maxLines: null,
+                                            decoration: InputDecoration(
+                                                contentPadding:
+                                                    EdgeInsets.all(10),
+                                                hintText: "Notes")),
+                                        actions: [
+                                          Row(
+                                            children: [
+                                              TextButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Text("Close")),
+                                            ],
+                                          )
+                                        ],
+                                      );
+                                    });
+                              },
                               child: Text(
-                                "Entering past workouts?",
+                                "Notes (optional)",
                               )),
                         ],
                       ),
-                      SizedBox(height: 10),
                       Row(
                         children: [
-                          Expanded(child: MyElevatedButton(text: "Add")),
+                          Expanded(
+                              child: MyElevatedButton(
+                                  onPressed: setWorkoutData, text: "Add"))
                         ],
                       ),
                     ],
                   ),
                 ),
-                for (int i = 0; i < map2.length; i++)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: MyWorkoutData(
-                      exercise: map2.keys.elementAt(i),
-                      reps: map2[map2.keys.elementAt(i)]!
-                          .where((element) =>
-                              map2[map2.keys.elementAt(i)]!.indexOf(element) %
-                                  2 ==
-                              0)
-                          .toList(),
-                      weight: map2[map2.keys.elementAt(i)]!
-                          .where((element) =>
-                              map2[map2.keys.elementAt(i)]!.indexOf(element) %
-                                  2 !=
-                              0)
-                          .toList(),
-                    ),
-                  ),
+                FutureBuilder(
+                    future: getDocId(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return ListView.builder(
+                            shrinkWrap: true,
+                            scrollDirection: Axis.vertical,
+                            itemCount: docIDs.length,
+                            itemBuilder: (context, index) {
+                              return MyElevatedButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            ViewWorkoutsScreen(
+                                          workoutName: docIDs[index].toString(),
+                                          database: "log",
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  text: DateFormat('hh:mm dd/MM/yy')
+                                      .format(DateTime.parse(docIDs[index])));
+                            });
+                      } else {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                    }),
               ],
             ),
           )),

@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fitness_app/components/elevated_button.dart';
 import 'package:fitness_app/components/text_field.dart';
 import 'package:fitness_app/screens/view_workouts_screen.dart';
-import 'package:fitness_app/services/workout_data_services.dart';
 import 'package:flutter/material.dart';
 
 class CreateScreen extends StatefulWidget {
@@ -25,9 +24,7 @@ class _CreateScreenState extends State<CreateScreen> {
   TextEditingController exerciseController = TextEditingController();
   TextEditingController weightController = TextEditingController();
   TextEditingController repsController = TextEditingController();
-
-  final WorkoutDataService workoutDataService =
-      WorkoutDataService(exercise: 'Bench Press', reps: 10, weight: 100);
+  TextEditingController notesController = TextEditingController();
 
   Map<String, dynamic> workoutData = {};
 
@@ -49,30 +46,36 @@ class _CreateScreenState extends State<CreateScreen> {
     });
   }
 
-  // Future setWorkoutData() async {
-  //   await fire.collection('create').doc(nameController.text).set({
-  //     exerciseController.text: {
-  //       "reps": FieldValue.arrayUnion([double.parse(repsController.text)]),
-  //       "weight": FieldValue.arrayUnion([double.parse(weightController.text)])
-  //     },
-  //     "dateTime": Timestamp.now()
-  //   }, SetOptions(merge: true));
-  // }
-
   Future setWorkoutData() async {
-    await fire
-        .collection(FirebaseAuth.instance.currentUser!.email!)
-        .doc('create')
-        .collection('workouts')
-        .doc(nameController.text)
-        .set({
-      exerciseController.text: {
-        "reps": FieldValue.arrayUnion([double.parse(repsController.text)]),
-        "weight": FieldValue.arrayUnion([double.parse(weightController.text)])
-      },
-      "dateTime": Timestamp.now()
-    }, SetOptions(merge: true));
-    clearFields();
+    if (nameController.text.isNotEmpty &&
+        exerciseController.text.isNotEmpty &&
+        weightController.text.isNotEmpty &&
+        repsController.text.isNotEmpty) {
+      await fire
+          .collection(FirebaseAuth.instance.currentUser!.email!)
+          .doc('create')
+          .collection('workouts')
+          .doc(nameController.text)
+          .set({
+        exerciseController.text: {
+          "reps": FieldValue.arrayUnion([double.parse(repsController.text)]),
+          "weight":
+              FieldValue.arrayUnion([double.parse(weightController.text)]),
+          if (notesController.text.isNotEmpty) "notes": notesController.text
+        },
+        "dateTime": DateTime.now().toString()
+      }, SetOptions(merge: true));
+      clearFields();
+    } else {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text("Not all fields are filled out!"),
+            );
+          });
+    }
+    setState(() {});
   }
 
   void clearFields() {
@@ -80,6 +83,7 @@ class _CreateScreenState extends State<CreateScreen> {
     exerciseController.clear();
     weightController.clear();
     repsController.clear();
+    notesController.clear();
   }
 
   @override
@@ -99,7 +103,7 @@ class _CreateScreenState extends State<CreateScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Enter',
+                            Text('Create',
                                 style: TextStyle(
                                     fontSize: 35, fontWeight: FontWeight.w400)),
                             Row(children: [
@@ -135,7 +139,47 @@ class _CreateScreenState extends State<CreateScreen> {
                                             Icon(Icons.fitness_center))),
                               ],
                             ),
-                            SizedBox(height: 5),
+                            Row(
+                              children: [
+                                Spacer(),
+                                TextButton(
+                                    onPressed: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              contentPadding: EdgeInsets.all(5),
+                                              title: Text("Notes"),
+                                              content: TextField(
+                                                  controller: notesController,
+                                                  keyboardType:
+                                                      TextInputType.multiline,
+                                                  maxLines: null,
+                                                  decoration: InputDecoration(
+                                                      contentPadding:
+                                                          EdgeInsets.all(10),
+                                                      hintText: "Notes")),
+                                              actions: [
+                                                Row(
+                                                  children: [
+                                                    TextButton(
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: Text("Close")),
+                                                  ],
+                                                )
+                                              ],
+                                            );
+                                          });
+                                    },
+                                    child: Text(
+                                      "Notes (optional)",
+                                    )),
+                              ],
+                            ),
+                            // SizedBox(height: 5),
                             Row(
                               children: [
                                 Expanded(
@@ -169,6 +213,7 @@ class _CreateScreenState extends State<CreateScreen> {
                                                   ViewWorkoutsScreen(
                                                 workoutName:
                                                     docIDs[index].toString(),
+                                                database: "create",
                                               ),
                                             ),
                                           );

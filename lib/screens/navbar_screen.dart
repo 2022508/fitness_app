@@ -38,13 +38,8 @@ class _MyNavBarState extends State<MyNavBar> {
       )),
       bottomNavigationBar: BottomNavigationBar(
           backgroundColor: Color.fromRGBO(201, 56, 11, 1),
-          // backgroundColor: Color.fromRGBO(170, 91, 67, 1),
           onTap: (value) {
             if (value == 5) {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => LaunchScreen()),
-              // );
               signOut();
             } else {
               setState(() {
