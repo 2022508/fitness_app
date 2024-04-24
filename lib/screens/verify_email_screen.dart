@@ -6,6 +6,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fitness_app/screens/navbar_screen.dart';
 import 'package:flutter/material.dart';
 
+// https://www.youtube.com/watch?v=rTr8BUlUftg
+// used to help verify the users email upon sign in
+
 class VerifyEmailScreen extends StatefulWidget {
   const VerifyEmailScreen({super.key});
 

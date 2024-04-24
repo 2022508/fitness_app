@@ -6,7 +6,7 @@ import 'package:fitness_app/components/elevated_button.dart';
 import 'package:fitness_app/components/text_field.dart';
 import 'package:fitness_app/screens/view_workouts_screen.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer';
+// import 'dart:developer';
 
 import 'package:intl/intl.dart';
 
@@ -44,7 +44,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
         docIDs.add(result.id);
       }
     });
-    log(docIDs.toString());
+    // log(docIDs.toString());
   }
 
   Future setWorkoutData() async {
@@ -89,6 +89,8 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
             );
           });
     }
+    FocusManager.instance.primaryFocus?.unfocus();
+
     setState(() {});
   }
 
@@ -181,7 +183,13 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                         children: [
                           Expanded(
                               child: MyElevatedButton(
-                                  onPressed: setWorkoutData, text: "Add"))
+                                  // onPressed: () {
+                                  //   setWorkoutData();
+                                  //   FocusManager.instance.primaryFocus
+                                  //       ?.unfocus();
+                                  // },
+                                  onPressed: setWorkoutData,
+                                  text: "Add"))
                         ],
                       ),
                     ],
