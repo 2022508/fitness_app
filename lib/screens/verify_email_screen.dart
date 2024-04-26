@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fitness_app/screens/navbar_screen.dart';
 import 'package:flutter/material.dart';
+import 'dart:developer';
 
 // https://www.youtube.com/watch?v=rTr8BUlUftg
 // used to help verify the users email upon sign in
@@ -63,7 +64,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
         canResendEmail = true;
       });
     } catch (e) {
-      print(e.toString());
+      log(e.toString());
     }
   }
 

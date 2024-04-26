@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fitness_app/components/elevated_button.dart';
 import 'package:fitness_app/components/text_field.dart';
 import 'package:fitness_app/screens/view_workouts_screen.dart';
+import 'package:fitness_app/services/workout_data_services.dart';
 import 'package:flutter/material.dart';
 
 // https://stackoverflow.com/questions/69501224/flutterfire-update-array-instead-of-replacing-it
@@ -33,21 +34,9 @@ class _CreateScreenState extends State<CreateScreen> {
 
   var fire = FirebaseFirestore.instance;
 
-  List<dynamic> docIDs = [];
+  final WorkoutDataService workoutDataService = WorkoutDataService();
 
-  Future getDocId() async {
-    await fire
-        .collection(FirebaseAuth.instance.currentUser!.email!)
-        .doc('create')
-        .collection('workouts')
-        .get()
-        .then((querySnapshot) {
-      docIDs.clear();
-      for (var result in querySnapshot.docs) {
-        docIDs.add(result.id);
-      }
-    });
-  }
+  List<dynamic> docIDs = [];
 
   Future setWorkoutData() async {
     if (nameController.text.isNotEmpty &&
@@ -199,7 +188,7 @@ class _CreateScreenState extends State<CreateScreen> {
                       // MyWorkoutData(),
 
                       FutureBuilder(
-                          future: getDocId(),
+                          future: workoutDataService.getDocId(docIDs, "create"),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.done) {

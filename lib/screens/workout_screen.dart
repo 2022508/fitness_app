@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fitness_app/components/elevated_button.dart';
 import 'package:fitness_app/components/text_field.dart';
 import 'package:fitness_app/screens/view_workouts_screen.dart';
+import 'package:fitness_app/services/workout_data_services.dart';
 import 'package:flutter/material.dart';
 // import 'dart:developer';
 
@@ -22,6 +23,9 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
   TextEditingController weightController = TextEditingController();
   TextEditingController repsController = TextEditingController();
   TextEditingController notesController = TextEditingController();
+
+  final WorkoutDataService workoutDataService = WorkoutDataService();
+
   var fire = FirebaseFirestore.instance;
   void clearFields() {
     exerciseController.clear();
@@ -32,21 +36,6 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
 
   List<dynamic> docIDs = [];
 
-  Future getDocId() async {
-    await fire
-        .collection(FirebaseAuth.instance.currentUser!.email!)
-        .doc('log')
-        .collection('workouts')
-        .get()
-        .then((querySnapshot) {
-      docIDs.clear();
-      for (var result in querySnapshot.docs) {
-        docIDs.add(result.id);
-      }
-    });
-    // log(docIDs.toString());
-  }
-
   Future setWorkoutData() async {
     if (exerciseController.text.isNotEmpty &&
         weightController.text.isNotEmpty &&
@@ -55,7 +44,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
       DateTime finalTimeStamp = DateTime.now();
       bool isSameWorkout = false;
 
-      await getDocId();
+      await workoutDataService.getDocId(docIDs, "log");
       if (docIDs.isNotEmpty) {
         lastWorkoutTime = DateTime.parse(docIDs.last);
 
@@ -77,7 +66,6 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
           if (notesController.text.isNotEmpty) "notes": notesController.text,
         },
         if (isSameWorkout != true) "dateTime": DateTime.now().toString()
-        // "dateTime": Timestamp.now()
       }, SetOptions(merge: true));
       clearFields();
     } else {
@@ -196,7 +184,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                   ),
                 ),
                 FutureBuilder(
-                    future: getDocId(),
+                    future: workoutDataService.getDocId(docIDs, "log"),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.done) {
                         return ListView.builder(

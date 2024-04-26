@@ -25,7 +25,6 @@ class _LogScreenState extends State<LogScreen> {
               children: [
                 SizedBox(height: 20),
                 Container(
-                    // alignment: Alignment.center,
                     width: width * 0.5,
                     decoration: BoxDecoration(
                       color: Colors.grey,
