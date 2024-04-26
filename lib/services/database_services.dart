@@ -47,4 +47,11 @@ class DatabaseServices {
         await db.query('pfp', where: 'email = ?', whereArgs: [email], limit: 1);
     return result.isNotEmpty ? result.first : {};
   }
+
+  static Future<int> deleteUserDetails(String email) async {
+    final db = await _openDatabase();
+    final int result =
+        await db.delete('pfp', where: 'email = ?', whereArgs: [email]);
+    return result;
+  }
 }

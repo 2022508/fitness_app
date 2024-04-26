@@ -1,7 +1,10 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, use_build_context_synchronously
+
+// https://www.youtube.com/watch?v=t_GcR_9-NcY
+// used to help delete the users data from firestore
 
 import 'dart:io';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fitness_app/components/elevated_button.dart';
 import 'package:fitness_app/components/password_text_field.dart';
@@ -26,22 +29,29 @@ class _AccountScreenState extends State<AccountScreen> {
   bool isUserLoaded = false;
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+  final TextEditingController newPasswordController = TextEditingController();
+
   final CameraServices cameraServices = CameraServices();
 
   XFile? image;
   final ImagePicker picker = ImagePicker();
+  String? path;
+  String? fileName;
+
+  final fire = FirebaseAuth.instance;
 
   Future<void> loadImage() async {
     Map<String, dynamic> getData =
-        await DatabaseServices.getUsersDetailsByEmail(
-            FirebaseAuth.instance.currentUser!.email!);
+        await DatabaseServices.getUsersDetailsByEmail(fire.currentUser!.email!);
     try {
-      final String path = getData['path'];
-      final String fileName = getData['email'];
+      path = getData['path'];
+      fileName = getData['email'];
       if (File('$path/$fileName').existsSync()) {
         setState(() {
           isImageLoaded = true;
           image = XFile('$path/$fileName');
+          path = getData['path'];
+          fileName = getData['email'];
         });
       }
     } catch (e) {
@@ -107,16 +117,90 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   Future<void> getUser() async {
-    var user = FirebaseAuth.instance.currentUser;
+    var user = fire.currentUser;
     if (user != null) {
       await user.reload();
-      user = FirebaseAuth.instance.currentUser;
+      user = fire.currentUser;
 
       setState(() {
         isUserLoaded = true;
         nameController.text = user!.displayName!;
         emailController.text = user.email!;
       });
+    }
+  }
+
+  Future updatePassword() async {
+    if (newPasswordController.text.isNotEmpty) {
+      try {
+        await fire.currentUser?.updatePassword(newPasswordController.text);
+        alertDialog(Text("Password updated."));
+      } on FirebaseAuthException catch (e) {
+        Navigator.pop(context);
+        if (e.code == 'weak-password') {
+          alertDialog(Text("The password provided is too weak."));
+        } else if (e.code == 'requires-recent-login') {
+          alertDialog(Text("Please log in to the app again."));
+        } else {
+          alertDialog(Text("An error occured."));
+        }
+      }
+    } else {
+      alertDialog(Text("Password cannot be empty."));
+    }
+    FocusManager.instance.primaryFocus?.unfocus();
+  }
+
+  void alertDialog(Text error) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(title: error);
+        });
+  }
+
+  Future<void> deleteUser() async {
+    String? email = fire.currentUser?.email;
+
+    // delete user and data from firebase
+    try {
+      await fire.currentUser?.delete();
+      // delete data from firestore
+      CollectionReference collectionWorkouts = FirebaseFirestore.instance
+          .collection(email!)
+          .doc("log")
+          .collection("workouts");
+      QuerySnapshot snapshotWorkouts = await collectionWorkouts.get();
+      for (QueryDocumentSnapshot doc in snapshotWorkouts.docs) {
+        doc.reference.delete();
+      }
+      CollectionReference collectionLog = FirebaseFirestore.instance
+          .collection(email)
+          .doc("create")
+          .collection("workouts");
+      QuerySnapshot snapshotLog = await collectionLog.get();
+      for (QueryDocumentSnapshot doc in snapshotLog.docs) {
+        doc.reference.delete();
+      }
+      CollectionReference collectionUser =
+          FirebaseFirestore.instance.collection(email);
+      QuerySnapshot snapshotUser = await collectionUser.get();
+      for (QueryDocumentSnapshot doc in snapshotUser.docs) {
+        doc.reference.delete();
+      }
+
+      // delete image from device
+      cameraServices.deleteImage(fileName!, path!);
+
+      // delete user from local database
+      DatabaseServices.deleteUserDetails(email);
+    } on FirebaseAuthException catch (e) {
+      Navigator.pop(context);
+      if (e.code == 'requires-recent-login') {
+        alertDialog(Text("Please log in to the app again."));
+      } else {
+        alertDialog(Text("An error occured."));
+      }
     }
   }
 
@@ -173,7 +257,12 @@ class _AccountScreenState extends State<AccountScreen> {
                         prefixIcon: Icon(Icons.account_circle_sharp),
                         suffixIcon: IconButton(
                           icon: Icon(Icons.upload, color: Colors.red, size: 30),
-                          onPressed: () {},
+                          onPressed: () {
+                            fire.currentUser!
+                                .updateDisplayName(nameController.text);
+                            alertDialog(Text("Name updated."));
+                            FocusManager.instance.primaryFocus?.unfocus();
+                          },
                         )),
                     MyTextField(
                       controller: emailController,
@@ -182,23 +271,34 @@ class _AccountScreenState extends State<AccountScreen> {
                       readOnly: true,
                     ),
                     MyPasswordTextField(
-                      hintText: "Old password",
-                      color: Colors.black,
-                      prefixIcon: Icon(Icons.lock),
-                    ),
-                    MyPasswordTextField(
+                      controller: newPasswordController,
                       hintText: "New password",
                       color: Colors.black,
                       prefixIcon: Icon(Icons.lock),
                       suffixIcon: IconButton(
                         icon: Icon(Icons.upload, color: Colors.red, size: 30),
-                        onPressed: () {},
+                        onPressed: updatePassword,
                       ),
+                    ),
+                    Row(
+                      children: [
+                        Expanded(child: Divider(height: 10)),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 7, right: 7),
+                          child: TextButton(
+                              child: Text("Delete account",
+                                  style: TextStyle(color: Colors.red)),
+                              onPressed: () async {
+                                await deleteUser();
+                              }),
+                        ),
+                        Expanded(child: Divider(height: 10)),
+                      ],
                     ),
                     MyElevatedButton(
                         text: "Sign out",
                         onPressed: () async {
-                          await FirebaseAuth.instance.signOut();
+                          await fire.signOut();
                         })
                   ],
                 )

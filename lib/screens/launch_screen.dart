@@ -9,6 +9,7 @@
 // https://stackoverflow.com/questions/52414629/how-to-update-state-of-a-modalbottomsheet-in-flutter
 // used to update the state of the modal bottom sheet for the title
 
+import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fitness_app/components/elevated_button.dart';
 import 'package:fitness_app/components/password_text_field.dart';
@@ -18,6 +19,7 @@ import 'package:fitness_app/services/database_services.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'dart:developer';
 
 class LaunchScreen extends StatefulWidget {
   const LaunchScreen({super.key});
@@ -33,6 +35,10 @@ class _LaunchScreenState extends State<LaunchScreen> {
   final signupNameController = TextEditingController();
   final signupEmailController = TextEditingController();
   final signupPasswordController = TextEditingController();
+
+  final resetPasswordEmailController = TextEditingController();
+  bool canResendEmail = false;
+  Timer? timer;
 
   final CameraServices cameraServices = CameraServices();
   XFile? image;
@@ -62,7 +68,10 @@ class _LaunchScreenState extends State<LaunchScreen> {
         await FirebaseAuth.instance.signInWithEmailAndPassword(
             email: signinEmailController.text.trim(),
             password: signinPasswordController.text.trim());
-        Navigator.pop(context);
+        //gets id of circular progress indicator
+        if (FirebaseAuth.instance.currentUser!.email != null) {
+          Navigator.pop(context);
+        }
       } on FirebaseAuthException catch (e) {
         Navigator.pop(context);
         if (e.code == 'user-not-found') {
@@ -97,9 +106,11 @@ class _LaunchScreenState extends State<LaunchScreen> {
             .createUserWithEmailAndPassword(
                 email: signupEmailController.text,
                 password: signupPasswordController.text);
-        Navigator.pop(context);
+        //gets id of circular progress indicator
+        if (FirebaseAuth.instance.currentUser!.email != null) {
+          Navigator.pop(context);
+        }
         await _saveUserDetails();
-
         await cameraServices.saveImage(image!, signupEmailController.text);
         await result.user?.updateDisplayName(signupNameController.text);
 
@@ -191,7 +202,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
               children: [
                 Spacer(),
                 TextButton(
-                    onPressed: () {},
+                    onPressed: sendVerificationEmail,
                     child: Text(
                       "Forgot password?",
                       style: TextStyle(color: Colors.white, fontSize: 16),
@@ -327,6 +338,65 @@ class _LaunchScreenState extends State<LaunchScreen> {
       "Profile Picture",
       Colors.black.withOpacity(0.5),
     );
+  }
+
+  Future sendVerificationEmail() async {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            contentPadding: EdgeInsets.all(5),
+            title: Text("Reset Password"),
+            content: TextField(
+                controller: resetPasswordEmailController,
+                decoration: InputDecoration(
+                    contentPadding: EdgeInsets.all(10), hintText: "Email")),
+            actions: [
+              Row(
+                children: [
+                  TextButton(
+                      onPressed: () async {
+                        try {
+                          await FirebaseAuth.instance.sendPasswordResetEmail(
+                              email: resetPasswordEmailController.text);
+                          setState(() {
+                            canResendEmail = false;
+                          });
+                          await Future.delayed(Duration(seconds: 5));
+                          setState(() {
+                            canResendEmail = true;
+                          });
+                        } catch (e) {
+                          log(e.toString());
+                        }
+                        Navigator.pop(context);
+                        alertDialog(Text("Email sent"));
+                      },
+                      child: Text("Send")),
+                ],
+              )
+            ],
+          );
+        });
+    try {
+      await FirebaseAuth.instance
+          .sendPasswordResetEmail(email: resetPasswordEmailController.text);
+      setState(() {
+        canResendEmail = false;
+      });
+      await Future.delayed(Duration(seconds: 10));
+      setState(() {
+        canResendEmail = true;
+      });
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   @override

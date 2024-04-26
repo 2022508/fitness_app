@@ -34,4 +34,11 @@ class CameraServices {
     }
     return XFile('');
   }
+
+  Future<void> deleteImage(String email, String path) async {
+    File file = File('$path/$email');
+    if (file.existsSync()) {
+      file.delete();
+    }
+  }
 }
