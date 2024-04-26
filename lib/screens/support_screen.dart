@@ -9,6 +9,9 @@ import 'dart:developer';
 // https://pub.dev/packages/speech_to_text
 // package and its documentation used for voice search
 
+// https://www.youtube.com/watch?v=ZHdg2kfKmjI
+// used for live search
+
 class SupportPage extends StatefulWidget {
   const SupportPage({super.key});
 
@@ -40,28 +43,34 @@ class _SupportPageState extends State<SupportPage> {
   var fire = FirebaseFirestore.instance;
 
   Map<String, dynamic> exercisesList = {};
+  Map<String, dynamic> exercisesListHolder = {};
 
   Future getInfo() async {
     await fire.collection('support').get().then((querySnapshot) {
       for (var result in querySnapshot.docs) {
         exercisesList.addAll({result.id: result.data()});
       }
-      log(exercisesList.toString());
-      if (exercisesList.containsKey(controller.text)) {
-        exercisesList = {controller.text: exercisesList[controller.text]}
-          ..addAll(exercisesList..remove(controller.text));
-      }
-      log(exercisesList.toString());
     });
-    controller.clear();
-    FocusManager.instance.primaryFocus?.unfocus();
-    setState(() {});
+    setState(() {
+      exercisesListHolder = exercisesList;
+    });
   }
 
   Future<void> _launchUrl(Uri url) async {
     if (!await launchUrl(url)) {
       throw Exception('Could not launch $url');
     }
+  }
+
+  void searchExercise(String query) {
+    final suggestions = exercisesListHolder.entries.where((exercise) {
+      final title = exercise.key.toLowerCase();
+      final searchLower = query.toLowerCase();
+      return title.contains(searchLower);
+    }).toList();
+    setState(() {
+      exercisesList = Map.fromEntries(suggestions);
+    });
   }
 
   @override
@@ -84,9 +93,10 @@ class _SupportPageState extends State<SupportPage> {
                   TextField(
                     controller: controller,
                     textInputAction: TextInputAction.go,
-                    onSubmitted: (String value) {
-                      getInfo();
+                    onSubmitted: (s) {
+                      FocusManager.instance.primaryFocus?.unfocus();
                     },
+                    onChanged: searchExercise,
                     style: TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
@@ -94,7 +104,9 @@ class _SupportPageState extends State<SupportPage> {
                     decoration: InputDecoration(
                       hintText: 'Search exercises',
                       prefixIcon: IconButton(
-                        onPressed: getInfo,
+                        onPressed: () {
+                          FocusManager.instance.primaryFocus?.unfocus();
+                        },
                         icon: Icon(
                           Icons.search,
                           size: 30,
