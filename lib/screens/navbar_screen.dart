@@ -7,6 +7,7 @@ import 'package:fitness_app/screens/support_screen.dart';
 import 'package:fitness_app/screens/log_screen.dart';
 import 'package:fitness_app/screens/workout_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 // https://www.youtube.com/watch?v=2UG4rdsCZKU
 // used to help create the bottom navigation bar
@@ -19,9 +20,7 @@ class MyNavBar extends StatefulWidget {
 }
 
 class _MyNavBarState extends State<MyNavBar> {
-  void signOut() async {
-    await FirebaseAuth.instance.signOut();
-  }
+  PageController pageController = PageController(initialPage: 0);
 
   int myIndex = 0;
   List<Widget> myPages = [
@@ -35,16 +34,21 @@ class _MyNavBarState extends State<MyNavBar> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-          child: IndexedStack(
-        index: myIndex,
+          child: PageView(
+        // index: myIndex,
+        controller: pageController,
         children: myPages,
+        onPageChanged: (value) {
+          setState(() {
+            myIndex = value;
+          });
+        },
       )),
       bottomNavigationBar: BottomNavigationBar(
           backgroundColor: Color.fromRGBO(201, 56, 11, 1),
           onTap: (value) {
-            setState(() {
-              myIndex = value;
-            });
+            pageController.animateToPage(value,
+                duration: Duration(milliseconds: 300), curve: Curves.ease);
           },
           currentIndex: myIndex,
           selectedItemColor: Colors.white,

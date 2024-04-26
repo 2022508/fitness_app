@@ -221,32 +221,29 @@ class _AccountScreenState extends State<AccountScreen> {
           child: Center(
               child: Column(
             children: [
-              if (isImageLoaded)
-                Stack(
-                  children: [
-                    SizedBox(height: 10),
-                    CircleAvatar(
-                      radius: 100,
-                      backgroundImage: image == null
-                          ? AssetImage('assets/images/pfp.jpg')
-                          : Image.file(File(image!.path)).image,
-                    ),
-                    Positioned(
-                      bottom: 20,
-                      right: 20,
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.add_a_photo,
-                          color: Colors.red.withOpacity(0.7),
-                          size: 30,
-                        ),
-                        onPressed: pfpModalBottomSheet,
+              Stack(
+                children: [
+                  SizedBox(height: 10),
+                  CircleAvatar(
+                    radius: 100,
+                    backgroundImage: image == null
+                        ? AssetImage('assets/images/pfp.jpg')
+                        : Image.file(File(image!.path)).image,
+                  ),
+                  Positioned(
+                    bottom: 20,
+                    right: 20,
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.add_a_photo,
+                        color: Colors.red.withOpacity(0.7),
+                        size: 30,
                       ),
+                      onPressed: pfpModalBottomSheet,
                     ),
-                  ],
-                )
-              else
-                Center(child: CircularProgressIndicator()),
+                  ),
+                ],
+              ),
               SizedBox(height: 20),
               if (isUserLoaded)
                 Column(
