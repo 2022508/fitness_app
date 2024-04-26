@@ -42,13 +42,9 @@ class _MyNavBarState extends State<MyNavBar> {
       bottomNavigationBar: BottomNavigationBar(
           backgroundColor: Color.fromRGBO(201, 56, 11, 1),
           onTap: (value) {
-            if (value == 5) {
-              signOut();
-            } else {
-              setState(() {
-                myIndex = value;
-              });
-            }
+            setState(() {
+              myIndex = value;
+            });
           },
           currentIndex: myIndex,
           selectedItemColor: Colors.white,
@@ -63,7 +59,6 @@ class _MyNavBarState extends State<MyNavBar> {
                 icon: Icon(Icons.contact_support), label: 'Support'),
             BottomNavigationBarItem(
                 icon: Icon(Icons.account_circle_rounded), label: 'Account'),
-            BottomNavigationBarItem(icon: Icon(Icons.logout), label: 'Logout'),
           ]),
     );
   }

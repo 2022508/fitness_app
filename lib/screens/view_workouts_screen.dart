@@ -32,7 +32,7 @@ class ViewWorkoutsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String date;
+    // String date;
     String title;
     if (database == 'log') {
       title = DateFormat('hh:mm dd/MM/yy').format(DateTime.parse(workoutName));

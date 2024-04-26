@@ -1,14 +1,16 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_const_declarations, unused_local_variable
+// ignore_for_file: prefer_const_constructors
 
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fitness_app/components/elevated_button.dart';
 import 'package:fitness_app/components/password_text_field.dart';
 import 'package:fitness_app/components/text_field.dart';
 import 'package:fitness_app/services/camera_services.dart';
 import 'package:fitness_app/services/database_services.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'dart:developer';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -27,20 +29,23 @@ class _AccountScreenState extends State<AccountScreen> {
   final CameraServices cameraServices = CameraServices();
 
   XFile? image;
+  final ImagePicker picker = ImagePicker();
 
   Future<void> loadImage() async {
-    Map<String, dynamic> _getData =
+    Map<String, dynamic> getData =
         await DatabaseServices.getUsersDetailsByEmail(
             FirebaseAuth.instance.currentUser!.email!);
-
-    final String path = _getData['path'];
-    final String fileName = _getData['email'];
-
-    if (File('$path/$fileName').existsSync()) {
-      setState(() {
-        isImageLoaded = true;
-        image = XFile('$path/$fileName');
-      });
+    try {
+      final String path = getData['path'];
+      final String fileName = getData['email'];
+      if (File('$path/$fileName').existsSync()) {
+        setState(() {
+          isImageLoaded = true;
+          image = XFile('$path/$fileName');
+        });
+      }
+    } catch (e) {
+      log(e.toString());
     }
   }
 
@@ -66,27 +71,16 @@ class _AccountScreenState extends State<AccountScreen> {
     );
   }
 
-  final ImagePicker picker = ImagePicker();
-
-  Future<void> getPhoto(ImageSource type) async {
-    final XFile? pickedImage = await picker.pickImage(source: type);
-    if (pickedImage != null) {
-      setState(() {
-        image = pickedImage;
-      });
-      cameraServices.saveImage(
-          pickedImage, FirebaseAuth.instance.currentUser!.email!);
-    }
-  }
-
   void pfpModalBottomSheet() {
     modalBottomSheet(
       Row(
         children: [
           Expanded(
             child: IconButton(
-              onPressed: () {
-                getPhoto(ImageSource.camera);
+              onPressed: () async {
+                image =
+                    await cameraServices.getPhotoLoggedIn(ImageSource.camera);
+                setState(() {});
               },
               icon: Icon(
                 Icons.camera_alt,
@@ -97,8 +91,10 @@ class _AccountScreenState extends State<AccountScreen> {
           ),
           Expanded(
             child: IconButton(
-              onPressed: () {
-                getPhoto(ImageSource.gallery);
+              onPressed: () async {
+                image =
+                    await cameraServices.getPhotoLoggedIn(ImageSource.gallery);
+                setState(() {});
               },
               icon: Icon(Icons.photo, size: 100, color: Colors.white),
             ),
@@ -111,10 +107,10 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   Future<void> getUser() async {
-    var user = await FirebaseAuth.instance.currentUser;
+    var user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       await user.reload();
-      user = await FirebaseAuth.instance.currentUser;
+      user = FirebaseAuth.instance.currentUser;
 
       setState(() {
         isUserLoaded = true;
@@ -133,7 +129,6 @@ class _AccountScreenState extends State<AccountScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // loadImage();
     return Scaffold(
         body: SafeArea(
       child: SingleChildScrollView(
@@ -177,13 +172,15 @@ class _AccountScreenState extends State<AccountScreen> {
                         hintText: "Name",
                         prefixIcon: Icon(Icons.account_circle_sharp),
                         suffixIcon: IconButton(
-                          icon: Icon(Icons.upload),
+                          icon: Icon(Icons.upload, color: Colors.red, size: 30),
                           onPressed: () {},
                         )),
                     MyTextField(
-                        controller: emailController,
-                        hintText: "email@gmail.com",
-                        prefixIcon: Icon(Icons.email)),
+                      controller: emailController,
+                      hintText: "email@gmail.com",
+                      prefixIcon: Icon(Icons.email),
+                      readOnly: true,
+                    ),
                     MyPasswordTextField(
                       hintText: "Old password",
                       color: Colors.black,
@@ -194,12 +191,15 @@ class _AccountScreenState extends State<AccountScreen> {
                       color: Colors.black,
                       prefixIcon: Icon(Icons.lock),
                       suffixIcon: IconButton(
-                        icon: Icon(Icons.upload),
+                        icon: Icon(Icons.upload, color: Colors.red, size: 30),
                         onPressed: () {},
                       ),
                     ),
-                    // SizedBox(height: 20),
-                    // MyElevatedButton(text: "Make changes")
+                    MyElevatedButton(
+                        text: "Sign out",
+                        onPressed: () async {
+                          await FirebaseAuth.instance.signOut();
+                        })
                   ],
                 )
               else

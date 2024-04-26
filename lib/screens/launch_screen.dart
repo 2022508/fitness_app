@@ -35,6 +35,12 @@ class _LaunchScreenState extends State<LaunchScreen> {
   final signupPasswordController = TextEditingController();
 
   final CameraServices cameraServices = CameraServices();
+  XFile? image;
+
+  String title = "FITNESS APP";
+  Icon pswdVisible = Icon(Icons.visibility_off_outlined);
+  bool isPswdVisible = true;
+  int isModalActive = 0;
 
   Future<void> _saveUserDetails() async {
     final path = (await getApplicationDocumentsDirectory()).path;
@@ -124,11 +130,6 @@ class _LaunchScreenState extends State<LaunchScreen> {
           return AlertDialog(title: error);
         });
   }
-
-  String title = "FITNESS APP";
-  Icon pswdVisible = Icon(Icons.visibility_off_outlined);
-  bool isPswdVisible = true;
-  int isModalActive = 0;
 
   void modalBottomSheet(Widget widget, String newTitle, [Color? color]) {
     showModalBottomSheet(
@@ -297,26 +298,14 @@ class _LaunchScreenState extends State<LaunchScreen> {
         "Create Account");
   }
 
-  final ImagePicker picker = ImagePicker();
-  XFile? image;
-
-  Future<void> getPhoto(ImageSource type) async {
-    final XFile? pickedImage = await picker.pickImage(source: type);
-    if (pickedImage != null) {
-      setState(() {
-        image = pickedImage;
-      });
-    }
-  }
-
   void pfpModalBottomSheet() {
     modalBottomSheet(
       Row(
         children: [
           Expanded(
             child: IconButton(
-              onPressed: () {
-                getPhoto(ImageSource.camera);
+              onPressed: () async {
+                image = await cameraServices.getPhoto(ImageSource.camera);
               },
               icon: Icon(
                 Icons.camera_alt,
@@ -327,8 +316,8 @@ class _LaunchScreenState extends State<LaunchScreen> {
           ),
           Expanded(
             child: IconButton(
-              onPressed: () {
-                getPhoto(ImageSource.gallery);
+              onPressed: () async {
+                image = await cameraServices.getPhoto(ImageSource.gallery);
               },
               icon: Icon(Icons.photo, size: 100, color: Colors.white),
             ),

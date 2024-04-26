@@ -20,8 +20,7 @@ class MyTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController tempController =
-        TextEditingController(text: "sdg");
+    final TextEditingController tempController = TextEditingController();
     return TextField(
         controller: controller ?? tempController,
         style: TextStyle(color: color ?? Colors.black),
