@@ -35,7 +35,7 @@ class ViewWorkoutsScreen extends StatelessWidget {
     // String date;
     String title;
     if (database == 'log') {
-      title = DateFormat('hh:mm dd/MM/yy').format(DateTime.parse(workoutName));
+      title = DateFormat('HH:mm dd/MM/yy').format(DateTime.parse(workoutName));
     } else {
       title = workoutName;
     }
@@ -53,6 +53,15 @@ class ViewWorkoutsScreen extends StatelessWidget {
               future: getWorkoutData(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
+                  if (database == 'create') {
+                    title =
+                        '$title - ${DateFormat('HH:mm dd/MM/yy').format(DateTime.parse(workoutData[workoutName]['dateTime'].toString()))}';
+                  }
+                  if (workoutData.containsKey(workoutName)) {
+                    var workout = workoutData[workoutName];
+                    workout.removeWhere(
+                        (key, value) => key == 'dates' || key == 'dateTime');
+                  }
                   return Container(
                     margin: EdgeInsets.all(10),
                     padding: EdgeInsets.all(10),
@@ -66,16 +75,9 @@ class ViewWorkoutsScreen extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-                        Text(
-                          DateFormat('hh:mm dd/MM/yy').format(DateTime.parse(
-                              workoutData[workoutName].values.elementAt(0))),
-                          style: TextStyle(
-                            fontSize: 25,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
+                        Text(title),
                         SizedBox(height: 10),
-                        for (int i = 1;
+                        for (int i = 0;
                             i < workoutData[workoutName].length;
                             i++)
                           MyWorkoutData(

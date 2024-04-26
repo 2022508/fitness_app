@@ -7,7 +7,7 @@ import 'package:fitness_app/components/text_field.dart';
 import 'package:fitness_app/screens/view_workouts_screen.dart';
 import 'package:fitness_app/services/workout_data_services.dart';
 import 'package:flutter/material.dart';
-// import 'dart:developer';
+import 'dart:developer';
 
 import 'package:intl/intl.dart';
 
@@ -25,6 +25,8 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
   TextEditingController notesController = TextEditingController();
 
   final WorkoutDataService workoutDataService = WorkoutDataService();
+
+  final Map<String, dynamic> workoutData = {};
 
   var fire = FirebaseFirestore.instance;
   void clearFields() {
@@ -45,11 +47,12 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
       bool isSameWorkout = false;
 
       await workoutDataService.getDocId(docIDs, "log");
+      await getWorkoutData();
       if (docIDs.isNotEmpty) {
-        lastWorkoutTime = DateTime.parse(docIDs.last);
-
-        if (DateTime.now().difference(lastWorkoutTime).inHours < 4) {
-          finalTimeStamp = lastWorkoutTime;
+        lastWorkoutTime = DateTime.parse(
+            workoutData[docIDs.last.toString()]['dates']['lastWorkoutTime']);
+        if (DateTime.now().difference(lastWorkoutTime).inHours < 2) {
+          finalTimeStamp = DateTime.parse(docIDs.last);
           isSameWorkout = true;
         }
       }
@@ -65,7 +68,10 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
               FieldValue.arrayUnion([double.parse(weightController.text)]),
           if (notesController.text.isNotEmpty) "notes": notesController.text,
         },
-        if (isSameWorkout != true) "dateTime": DateTime.now().toString()
+        "dates": {
+          if (isSameWorkout != true) "dateTime": DateTime.now().toString(),
+          "lastWorkoutTime": DateTime.now().toString(),
+        }
       }, SetOptions(merge: true));
       clearFields();
     } else {
@@ -80,6 +86,20 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     FocusManager.instance.primaryFocus?.unfocus();
 
     setState(() {});
+  }
+
+  Future getWorkoutData() async {
+    await fire
+        .collection(FirebaseAuth.instance.currentUser!.email!)
+        .doc('log')
+        .collection('workouts')
+        .get()
+        .then((querySnapshot) {
+      for (var result in querySnapshot.docs) {
+        workoutData.addAll({result.id: result.data()});
+      }
+    });
+    log(workoutData.toString());
   }
 
   @override
@@ -171,13 +191,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                         children: [
                           Expanded(
                               child: MyElevatedButton(
-                                  // onPressed: () {
-                                  //   setWorkoutData();
-                                  //   FocusManager.instance.primaryFocus
-                                  //       ?.unfocus();
-                                  // },
-                                  onPressed: setWorkoutData,
-                                  text: "Add"))
+                                  onPressed: setWorkoutData, text: "Add"))
                         ],
                       ),
                     ],
@@ -199,13 +213,13 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                       MaterialPageRoute(
                                         builder: (context) =>
                                             ViewWorkoutsScreen(
-                                          workoutName: docIDs[index].toString(),
+                                          workoutName: docIDs[index],
                                           database: "log",
                                         ),
                                       ),
                                     );
                                   },
-                                  text: DateFormat('hh:mm dd/MM/yy')
+                                  text: DateFormat('HH:mm dd/MM/yy')
                                       .format(DateTime.parse(docIDs[index])));
                             });
                       } else {
