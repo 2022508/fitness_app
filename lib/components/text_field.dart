@@ -25,6 +25,10 @@ class MyTextField extends StatelessWidget {
         controller: controller ?? tempController,
         style: TextStyle(color: color ?? Colors.black),
         readOnly: readOnly ?? false,
+        onSubmitted: (s) {
+          FocusManager.instance.primaryFocus?.unfocus();
+          controller?.clear();
+        },
         decoration: InputDecoration(
           prefixIcon: prefixIcon,
           suffixIcon: suffixIcon,

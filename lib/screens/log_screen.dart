@@ -92,6 +92,8 @@ class _LogScreenState extends State<LogScreen> {
                         suffixIcon: IconButton(
                           icon: Icon(Icons.search),
                           onPressed: () {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                            exerciseController.clear();
                             setState(() {
                               exercise = exerciseController.text;
                             });
