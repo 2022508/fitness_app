@@ -49,6 +49,7 @@ class _LogScreenState extends State<LogScreen> {
             averageWeight += element;
           }
           averageWeight = averageWeight / exerciseWeight.length;
+          averageWeight = double.parse(averageWeight.toStringAsFixed(0));
           spotsWeight.add(FlSpot(
               DateTime.parse(value['dates']['dateTime'])
                   .millisecondsSinceEpoch
