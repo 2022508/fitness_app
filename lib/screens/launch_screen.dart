@@ -69,7 +69,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
             email: signinEmailController.text.trim(),
             password: signinPasswordController.text.trim());
         //gets id of circular progress indicator
-        if (FirebaseAuth.instance.currentUser!.email != null) {
+        if (mounted) {
           Navigator.pop(context);
         }
       } on FirebaseAuthException catch (e) {
@@ -107,7 +107,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
                 email: signupEmailController.text,
                 password: signupPasswordController.text);
         //gets id of circular progress indicator
-        if (FirebaseAuth.instance.currentUser!.email != null) {
+        if (mounted) {
           Navigator.pop(context);
         }
         await _saveUserDetails();

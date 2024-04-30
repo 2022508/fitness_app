@@ -51,9 +51,11 @@ class _SupportPageState extends State<SupportPage> {
         exercisesList.addAll({result.id: result.data()});
       }
     });
-    setState(() {
-      exercisesListHolder = exercisesList;
-    });
+    if (mounted) {
+      setState(() {
+        exercisesListHolder = exercisesList;
+      });
+    }
   }
 
   Future<void> _launchUrl(Uri url) async {

@@ -121,12 +121,13 @@ class _AccountScreenState extends State<AccountScreen> {
     if (user != null) {
       await user.reload();
       user = fire.currentUser;
-
-      setState(() {
-        isUserLoaded = true;
-        nameController.text = user!.displayName!;
-        emailController.text = user.email!;
-      });
+      if (mounted) {
+        setState(() {
+          isUserLoaded = true;
+          nameController.text = user!.displayName!;
+          emailController.text = user.email!;
+        });
+      }
     }
   }
 

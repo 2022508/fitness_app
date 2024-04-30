@@ -20,7 +20,7 @@ class MyWorkoutData extends StatelessWidget {
     double width = MediaQuery.of(context).size.width;
     final double paddingWidth = width * 0.02;
     TextStyle exerciseTextStyle =
-        TextStyle(fontSize: 25, fontWeight: FontWeight.w500);
+        TextStyle(fontSize: 20, fontWeight: FontWeight.w500);
     TextStyle dataTextStyle =
         TextStyle(fontSize: 14, fontWeight: FontWeight.w400, height: 1);
 
