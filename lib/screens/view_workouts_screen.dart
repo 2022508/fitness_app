@@ -42,8 +42,8 @@ class ViewWorkoutsScreen extends StatelessWidget {
                 if (snapshot.connectionState == ConnectionState.done) {
                   if (database == 'create') {
                     notesTitle = title;
-                    title =
-                        '$title - ${DateFormat('HH:mm dd/MM/yy').format(DateTime.parse(workoutData[workoutName]['dateTime'].toString()))}';
+                    title = DateFormat('HH:mm dd/MM/yy').format(DateTime.parse(
+                        workoutData[workoutName]['dateTime'].toString()));
                   } else {
                     notesTitle = workoutName;
                   }

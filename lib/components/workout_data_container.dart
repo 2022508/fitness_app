@@ -47,7 +47,7 @@ class MyWorkoutData extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  Text(exercise, style: exerciseTextStyle),
+                  Flexible(child: Text(exercise, style: exerciseTextStyle)),
                   Spacer(),
                   IconButton(
                     onPressed: () {
