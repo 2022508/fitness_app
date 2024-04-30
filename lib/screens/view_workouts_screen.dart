@@ -1,11 +1,11 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fitness_app/components/workout_data_container.dart';
+import 'package:fitness_app/services/workout_data_services.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer';
 import 'package:intl/intl.dart';
+// import 'dart:developer';
 
 class ViewWorkoutsScreen extends StatelessWidget {
   final String workoutName;
@@ -15,25 +15,12 @@ class ViewWorkoutsScreen extends StatelessWidget {
 
   final fire = FirebaseFirestore.instance;
   final Map<String, dynamic> workoutData = {};
-
-  Future getWorkoutData() async {
-    await fire
-        .collection(FirebaseAuth.instance.currentUser!.email!)
-        .doc(database)
-        .collection('workouts')
-        .get()
-        .then((querySnapshot) {
-      for (var result in querySnapshot.docs) {
-        workoutData.addAll({result.id: result.data()});
-      }
-    });
-    log(workoutData.toString());
-  }
+  final WorkoutDataService workoutDataService = WorkoutDataService();
 
   @override
   Widget build(BuildContext context) {
-    // String date;
     String title;
+    String notesTitle;
     if (database == 'log') {
       title = DateFormat('HH:mm dd/MM/yy').format(DateTime.parse(workoutName));
     } else {
@@ -50,12 +37,15 @@ class ViewWorkoutsScreen extends StatelessWidget {
             child: Column(
           children: [
             FutureBuilder(
-              future: getWorkoutData(),
+              future: workoutDataService.getWorkoutData(database, workoutData),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
                   if (database == 'create') {
+                    notesTitle = title;
                     title =
                         '$title - ${DateFormat('HH:mm dd/MM/yy').format(DateTime.parse(workoutData[workoutName]['dateTime'].toString()))}';
+                  } else {
+                    notesTitle = workoutName;
                   }
                   if (workoutData.containsKey(workoutName)) {
                     var workout = workoutData[workoutName];
@@ -81,19 +71,22 @@ class ViewWorkoutsScreen extends StatelessWidget {
                             i < workoutData[workoutName].length;
                             i++)
                           MyWorkoutData(
-                              exercise:
-                                  workoutData[workoutName].keys.elementAt(i),
-                              reps: workoutData[workoutName]
-                                      [workoutData[workoutName].keys.elementAt(i)]
-                                  ['reps'],
-                              weight: workoutData[workoutName]
-                                      [workoutData[workoutName].keys.elementAt(i)]
-                                  ['weight'],
-                              notes: workoutData[workoutName][
-                                      workoutData[workoutName]
-                                          .keys
-                                          .elementAt(i)]['notes'] ??
-                                  ''),
+                            exercise:
+                                workoutData[workoutName].keys.elementAt(i),
+                            reps: workoutData[workoutName]
+                                    [workoutData[workoutName].keys.elementAt(i)]
+                                ['reps'],
+                            weight: workoutData[workoutName]
+                                    [workoutData[workoutName].keys.elementAt(i)]
+                                ['weight'],
+                            notes: workoutData[workoutName][
+                                    workoutData[workoutName]
+                                        .keys
+                                        .elementAt(i)]['notes'] ??
+                                '',
+                            db: database,
+                            title: notesTitle,
+                          ),
                       ],
                     ),
                   );

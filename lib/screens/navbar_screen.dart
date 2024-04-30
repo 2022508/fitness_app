@@ -37,16 +37,23 @@ class _MyNavBarState extends State<MyNavBar> {
         controller: pageController,
         children: myPages,
         onPageChanged: (value) {
-          setState(() {
-            myIndex = value;
-          });
+          // mounteds are to try and get rid of an error, they helped with a different one but i cant find anything anywhere on this error, happens like 1/50 times you switch pages
+          // 'package:flutter/src/animation/animation_controller.dart': Failed assertion: line 857 pos 12: 'elapsedInSeconds >= 0.0': is not true.
+          if (mounted) {
+            setState(() {
+              myIndex = value;
+            });
+          }
         },
       )),
       bottomNavigationBar: BottomNavigationBar(
           backgroundColor: Color.fromRGBO(201, 56, 11, 1),
           onTap: (value) {
-            pageController.animateToPage(value,
-                duration: Duration(milliseconds: 300), curve: Curves.ease);
+            if (mounted) {
+              pageController.animateToPage(value,
+                  duration: Duration(milliseconds: 300),
+                  curve: Curves.fastOutSlowIn);
+            }
           },
           currentIndex: myIndex,
           selectedItemColor: Colors.white,

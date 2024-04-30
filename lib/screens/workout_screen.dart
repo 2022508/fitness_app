@@ -1,13 +1,13 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_print
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fitness_app/components/elevated_button.dart';
 import 'package:fitness_app/components/text_field.dart';
 import 'package:fitness_app/screens/view_workouts_screen.dart';
+import 'package:fitness_app/screens/workouts_list_screen.dart';
 import 'package:fitness_app/services/workout_data_services.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer';
+// import 'dart:developer';
 
 import 'package:intl/intl.dart';
 
@@ -42,37 +42,13 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     if (exerciseController.text.isNotEmpty &&
         weightController.text.isNotEmpty &&
         repsController.text.isNotEmpty) {
-      DateTime lastWorkoutTime;
-      DateTime finalTimeStamp = DateTime.now();
-      bool isSameWorkout = false;
-
-      await workoutDataService.getDocId(docIDs, "log");
-      await getWorkoutData();
-      if (docIDs.isNotEmpty) {
-        lastWorkoutTime = DateTime.parse(
-            workoutData[docIDs.last.toString()]['dates']['lastWorkoutTime']);
-        if (DateTime.now().difference(lastWorkoutTime).inHours < 2) {
-          finalTimeStamp = DateTime.parse(docIDs.last);
-          isSameWorkout = true;
-        }
-      }
-      await fire
-          .collection(FirebaseAuth.instance.currentUser!.email!)
-          .doc('log')
-          .collection('workouts')
-          .doc(finalTimeStamp.toString())
-          .set({
-        exerciseController.text: {
-          "reps": FieldValue.arrayUnion([double.parse(repsController.text)]),
-          "weight":
-              FieldValue.arrayUnion([double.parse(weightController.text)]),
-          if (notesController.text.isNotEmpty) "notes": notesController.text,
-        },
-        "dates": {
-          if (isSameWorkout != true) "dateTime": DateTime.now().toString(),
-          "lastWorkoutTime": DateTime.now().toString(),
-        }
-      }, SetOptions(merge: true));
+      workoutDataService.setWorkoutDataLog(
+          exerciseController.text,
+          weightController.text,
+          repsController.text,
+          notesController.text,
+          docIDs,
+          workoutData);
       clearFields();
     } else {
       showDialog(
@@ -83,23 +59,8 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
             );
           });
     }
-    FocusManager.instance.primaryFocus?.unfocus();
-
     setState(() {});
-  }
-
-  Future getWorkoutData() async {
-    await fire
-        .collection(FirebaseAuth.instance.currentUser!.email!)
-        .doc('log')
-        .collection('workouts')
-        .get()
-        .then((querySnapshot) {
-      for (var result in querySnapshot.docs) {
-        workoutData.addAll({result.id: result.data()});
-      }
-    });
-    log(workoutData.toString());
+    FocusManager.instance.primaryFocus?.unfocus();
   }
 
   @override
@@ -109,14 +70,14 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
         body: SafeArea(
             child: SingleChildScrollView(
       child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.only(left: 40, right: 40, top: 40),
           child: Center(
             child: Column(
               children: [
                 Container(
                   width: width,
-                  margin: const EdgeInsets.all(30),
-                  padding: const EdgeInsets.all(10),
+                  // margin: const EdgeInsets.all(30),
+                  padding: const EdgeInsets.all(15),
                   color: Colors.grey[200],
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -197,14 +158,36 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                     ],
                   ),
                 ),
+                SizedBox(height: 30),
+                Row(
+                  children: [
+                    Expanded(child: Divider(height: 10)),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 7, right: 7),
+                      child: Text(
+                        "Recent workouts",
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ),
+                    Expanded(child: Divider(height: 10)),
+                  ],
+                ),
+                SizedBox(height: 10),
                 FutureBuilder(
                     future: workoutDataService.getDocId(docIDs, "log"),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.done) {
+                        docIDs = docIDs.reversed.toList();
+                        int length = docIDs.length;
+                        if (docIDs.length > 3) {
+                          length = 3;
+                        } else {
+                          length = docIDs.length;
+                        }
                         return ListView.builder(
                             shrinkWrap: true,
                             scrollDirection: Axis.vertical,
-                            itemCount: docIDs.length,
+                            itemCount: length,
                             itemBuilder: (context, index) {
                               return MyElevatedButton(
                                   onPressed: () {
@@ -221,11 +204,34 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                   },
                                   text: DateFormat('HH:mm dd/MM/yy')
                                       .format(DateTime.parse(docIDs[index])));
+                              // text: docIDs[index].toString());
                             });
                       } else {
                         return Center(child: CircularProgressIndicator());
                       }
                     }),
+                Row(
+                  children: [
+                    Expanded(child: Divider(height: 10)),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 7, right: 7),
+                      child: TextButton(
+                        child: Text("View more",
+                            style: TextStyle(color: Colors.red)),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => WorkoutListScreen(
+                                  db: "log", header: "Workouts Completed"),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    Expanded(child: Divider(height: 10)),
+                  ],
+                ),
               ],
             ),
           )),

@@ -4,16 +4,19 @@
 // used to help delete the users data from firestore
 
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fitness_app/components/elevated_button.dart';
 import 'package:fitness_app/components/password_text_field.dart';
 import 'package:fitness_app/components/text_field.dart';
+import 'package:fitness_app/services/auth_services.dart';
 import 'package:fitness_app/services/camera_services.dart';
 import 'package:fitness_app/services/database_services.dart';
+import 'package:fitness_app/services/workout_data_services.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:developer';
+
+// import 'package:path_provider/path_provider.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -29,9 +32,11 @@ class _AccountScreenState extends State<AccountScreen> {
   bool isUserLoaded = false;
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
-  final TextEditingController newPasswordController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   final CameraServices cameraServices = CameraServices();
+  final AuthServices authServices = AuthServices();
+  final WorkoutDataService workoutDataService = WorkoutDataService();
 
   XFile? image;
   final ImagePicker picker = ImagePicker();
@@ -58,6 +63,12 @@ class _AccountScreenState extends State<AccountScreen> {
       log(e.toString());
     }
   }
+
+  // Future<void> _saveUserDetails() async {
+  //   final path = (await getApplicationDocumentsDirectory()).path;
+
+  //   await DatabaseServices.addUserDetails(fire.currentUser!.email!, path);
+  // }
 
   void modalBottomSheet(Widget widget, String newTitle, [Color? color]) {
     showModalBottomSheet(
@@ -116,25 +127,22 @@ class _AccountScreenState extends State<AccountScreen> {
     );
   }
 
-  Future<void> getUser() async {
-    var user = fire.currentUser;
-    if (user != null) {
-      await user.reload();
-      user = fire.currentUser;
-      if (mounted) {
-        setState(() {
-          isUserLoaded = true;
-          nameController.text = user!.displayName!;
-          emailController.text = user.email!;
-        });
-      }
+  void getUser() {
+    authServices.getUser();
+    if (fire.currentUser != null) {
+      setState(() {
+        isUserLoaded = true;
+        nameController.text = fire.currentUser!.displayName!;
+        emailController.text = fire.currentUser!.email!;
+      });
     }
   }
 
   Future updatePassword() async {
-    if (newPasswordController.text.isNotEmpty) {
+    if (passwordController.text.isNotEmpty) {
       try {
-        await fire.currentUser?.updatePassword(newPasswordController.text);
+        await fire.currentUser?.updatePassword(passwordController.text);
+        passwordController.clear();
         alertDialog(Text("Password updated."));
       } on FirebaseAuthException catch (e) {
         Navigator.pop(context);
@@ -161,38 +169,16 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   Future<void> deleteUser() async {
-    String? email = fire.currentUser?.email;
-
+    String? email = fire.currentUser!.email;
     // delete user and data from firebase
     try {
       await fire.currentUser?.delete();
       // delete data from firestore
-      CollectionReference collectionWorkouts = FirebaseFirestore.instance
-          .collection(email!)
-          .doc("log")
-          .collection("workouts");
-      QuerySnapshot snapshotWorkouts = await collectionWorkouts.get();
-      for (QueryDocumentSnapshot doc in snapshotWorkouts.docs) {
-        doc.reference.delete();
-      }
-      CollectionReference collectionLog = FirebaseFirestore.instance
-          .collection(email)
-          .doc("create")
-          .collection("workouts");
-      QuerySnapshot snapshotLog = await collectionLog.get();
-      for (QueryDocumentSnapshot doc in snapshotLog.docs) {
-        doc.reference.delete();
-      }
-      CollectionReference collectionUser =
-          FirebaseFirestore.instance.collection(email);
-      QuerySnapshot snapshotUser = await collectionUser.get();
-      for (QueryDocumentSnapshot doc in snapshotUser.docs) {
-        doc.reference.delete();
-      }
-
+      workoutDataService.deleteWorkoutDataLog(email!);
+      workoutDataService.deleteWorkoutDataCreate(email);
+      workoutDataService.deleteUserData(email);
       // delete image from device
       cameraServices.deleteImage(fileName!, path!);
-
       // delete user from local database
       DatabaseServices.deleteUserDetails(email);
     } on FirebaseAuthException catch (e) {
@@ -269,7 +255,7 @@ class _AccountScreenState extends State<AccountScreen> {
                       readOnly: true,
                     ),
                     MyPasswordTextField(
-                      controller: newPasswordController,
+                      controller: passwordController,
                       hintText: "New password",
                       color: Colors.black,
                       prefixIcon: Icon(Icons.lock),

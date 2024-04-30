@@ -1,0 +1,129 @@
+════════ Exception caught by scheduler library ═════════════════════════════════
+The following assertion was thrown during a scheduler callback:
+'package:flutter/src/animation/animation_controller.dart': Failed assertion: line 857 pos 12: 'elapsedInSeconds >= 0.0': is not true.
+
+Either the assertion indicates an error in the framework itself, or we should provide substantially more information in this error message to help you determine and fix the underlying cause.
+In either case, please report this assertion by filing a bug on GitHub:
+  https://github.com/flutter/flutter/issues/new?template=2_bug.yml
+
+When the exception was thrown, this was the stack:
+#2      AnimationController._tick (package:flutter/src/animation/animation_controller.dart:857:12)
+animation_controller.dart:857
+#3      Ticker._tick (package:flutter/src/scheduler/ticker.dart:258:12)
+ticker.dart:258
+#4      SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1386:15)
+binding.dart:1386
+#5      SchedulerBinding.handleBeginFrame.<anonymous closure> (package:flutter/src/scheduler/binding.dart:1233:11)
+binding.dart:1233
+#6      _LinkedHashMapMixin.forEach (dart:collection-patch/compact_hash.dart:633:13)
+compact_hash.dart:633
+#7      SchedulerBinding.handleBeginFrame (package:flutter/src/scheduler/binding.dart:1231:17)
+binding.dart:1231
+#8      SchedulerBinding._handleBeginFrame (package:flutter/src/scheduler/binding.dart:1148:5)
+binding.dart:1148
+#9      _invoke1 (dart:ui/hooks.dart:328:13)
+hooks.dart:328
+#10     PlatformDispatcher._beginFrame (dart:ui/platform_dispatcher.dart:361:5)
+platform_dispatcher.dart:361
+#11     _beginFrame (dart:ui/hooks.dart:272:31)
+hooks.dart:272
+(elided 2 frames from class _AssertionError)
+
+This exception was thrown in the context of a scheduler callback. When the scheduler callback was _registered_ (as opposed to when the exception was thrown), this was the stack:
+#2      SchedulerBinding.scheduleFrameCallback (package:flutter/src/scheduler/binding.dart:605:49)
+binding.dart:605
+#3      Ticker.scheduleTick (package:flutter/src/scheduler/ticker.dart:274:46)
+ticker.dart:274
+#4      Ticker.start (package:flutter/src/scheduler/ticker.dart:180:7)
+ticker.dart:180
+#5      AnimationController._startSimulation (package:flutter/src/animation/animation_controller.dart:777:42)
+animation_controller.dart:777
+#6      AnimationController.repeat (package:flutter/src/animation/animation_controller.dart:686:12)
+animation_controller.dart:686
+#7      _CircularProgressIndicatorState.initState (package:flutter/src/material/progress_indicator.dart:686:19)
+progress_indicator.dart:686
+#8      StatefulElement._firstBuild (package:flutter/src/widgets/framework.dart:5611:55)
+framework.dart:5611
+#9      ComponentElement.mount (package:flutter/src/widgets/framework.dart:5456:5)
+framework.dart:5456
+...     Normal element mounting (15 frames)
+#24     Element.inflateWidget (package:flutter/src/widgets/framework.dart:4335:16)
+framework.dart:4335
+#25     MultiChildRenderObjectElement.inflateWidget (package:flutter/src/widgets/framework.dart:6893:36)
+framework.dart:6893
+#26     MultiChildRenderObjectElement.mount (package:flutter/src/widgets/framework.dart:6905:32)
+framework.dart:6905
+...     Normal element mounting (135 frames)
+#161    Element.inflateWidget (package:flutter/src/widgets/framework.dart:4335:16)
+framework.dart:4335
+#162    MultiChildRenderObjectElement.inflateWidget (package:flutter/src/widgets/framework.dart:6893:36)
+framework.dart:6893
+#163    MultiChildRenderObjectElement.mount (package:flutter/src/widgets/framework.dart:6905:32)
+framework.dart:6905
+...     Normal element mounting (153 frames)
+#316    Element.inflateWidget (package:flutter/src/widgets/framework.dart:4335:16)
+framework.dart:4335
+#317    Element.updateChild (package:flutter/src/widgets/framework.dart:3846:18)
+framework.dart:3846
+#318    SliverMultiBoxAdaptorElement.updateChild (package:flutter/src/widgets/sliver.dart:858:37)
+sliver.dart:858
+#319    SliverMultiBoxAdaptorElement.createChild.<anonymous closure> (package:flutter/src/widgets/sliver.dart:843:20)
+sliver.dart:843
+#320    BuildOwner.buildScope (package:flutter/src/widgets/framework.dart:2844:19)
+framework.dart:2844
+#321    SliverMultiBoxAdaptorElement.createChild (package:flutter/src/widgets/sliver.dart:835:12)
+sliver.dart:835
+#322    RenderSliverMultiBoxAdaptor._createOrObtainChild.<anonymous closure> (package:flutter/src/rendering/sliver_multi_box_adaptor.dart:349:23)
+sliver_multi_box_adaptor.dart:349
+#323    RenderObject.invokeLayoutCallback.<anonymous closure> (package:flutter/src/rendering/object.dart:2686:59)
+object.dart:2686
+#324    PipelineOwner._enableMutationsToDirtySubtrees (package:flutter/src/rendering/object.dart:1097:15)
+object.dart:1097
+#325    RenderObject.invokeLayoutCallback (package:flutter/src/rendering/object.dart:2686:14)
+object.dart:2686
+#326    RenderSliverMultiBoxAdaptor._createOrObtainChild (package:flutter/src/rendering/sliver_multi_box_adaptor.dart:338:5)
+sliver_multi_box_adaptor.dart:338
+#327    RenderSliverMultiBoxAdaptor.insertAndLayoutChild (package:flutter/src/rendering/sliver_multi_box_adaptor.dart:486:5)
+sliver_multi_box_adaptor.dart:486
+#328    RenderSliverFixedExtentBoxAdaptor.performLayout (package:flutter/src/rendering/sliver_fixed_extent_list.dart:319:17)
+sliver_fixed_extent_list.dart:319
+#329    RenderObject.layout (package:flutter/src/rendering/object.dart:2575:7)
+object.dart:2575
+#330    RenderSliverEdgeInsetsPadding.performLayout (package:flutter/src/rendering/sliver_padding.dart:139:12)
+sliver_padding.dart:139
+#331    _RenderSliverFractionalPadding.performLayout (package:flutter/src/widgets/sliver_fill.dart:160:11)
+sliver_fill.dart:160
+#332    RenderObject.layout (package:flutter/src/rendering/object.dart:2575:7)
+object.dart:2575
+#333    RenderViewportBase.layoutChildSequence (package:flutter/src/rendering/viewport.dart:601:13)
+viewport.dart:601
+#334    RenderViewport._attemptLayout (package:flutter/src/rendering/viewport.dart:1555:12)
+viewport.dart:1555
+#335    RenderViewport.performLayout (package:flutter/src/rendering/viewport.dart:1464:20)
+viewport.dart:1464
+#336    RenderObject._layoutWithoutResize (package:flutter/src/rendering/object.dart:2414:7)
+object.dart:2414
+#337    PipelineOwner.flushLayout (package:flutter/src/rendering/object.dart:1051:18)
+object.dart:1051
+#338    PipelineOwner.flushLayout (package:flutter/src/rendering/object.dart:1064:15)
+object.dart:1064
+#339    RendererBinding.drawFrame (package:flutter/src/rendering/binding.dart:582:23)
+binding.dart:582
+#340    WidgetsBinding.drawFrame (package:flutter/src/widgets/binding.dart:991:13)
+binding.dart:991
+#341    RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:448:5)
+binding.dart:448
+#342    SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1386:15)
+binding.dart:1386
+#343    SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1311:9)
+binding.dart:1311
+#344    SchedulerBinding._handleDrawFrame (package:flutter/src/scheduler/binding.dart:1169:5)
+binding.dart:1169
+#345    _invoke (dart:ui/hooks.dart:312:13)
+hooks.dart:312
+#346    PlatformDispatcher._drawFrame (dart:ui/platform_dispatcher.dart:399:5)
+platform_dispatcher.dart:399
+#347    _drawFrame (dart:ui/hooks.dart:283:31)
+hooks.dart:283
+(elided 2 frames from class _FrameCallbackEntry)
+════════════════════════════════════════════════════════════════════════════════

@@ -3,6 +3,7 @@
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fitness_app/services/database_services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -30,6 +31,7 @@ class CameraServices {
     final XFile? pickedImage = await picker.pickImage(source: type);
     if (pickedImage != null) {
       saveImage(pickedImage, FirebaseAuth.instance.currentUser!.email!);
+      saveUserDetails();
       return pickedImage;
     }
     return XFile('');
@@ -40,5 +42,12 @@ class CameraServices {
     if (file.existsSync()) {
       file.delete();
     }
+  }
+
+  Future<void> saveUserDetails() async {
+    final path = (await getApplicationDocumentsDirectory()).path;
+
+    await DatabaseServices.addUserDetails(
+        FirebaseAuth.instance.currentUser!.email!, path);
   }
 }

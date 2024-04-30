@@ -1,5 +1,6 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:fitness_app/services/workout_data_services.dart';
 import 'package:flutter/material.dart';
 
 class MyWorkoutData extends StatelessWidget {
@@ -7,13 +8,17 @@ class MyWorkoutData extends StatelessWidget {
   final String notes;
   final List<dynamic> reps;
   final List<dynamic> weight;
+  final String? db;
+  final String? title;
 
   const MyWorkoutData(
       {super.key,
       required this.exercise,
       required this.notes,
       required this.reps,
-      required this.weight});
+      required this.weight,
+      this.db,
+      this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +28,8 @@ class MyWorkoutData extends StatelessWidget {
         TextStyle(fontSize: 20, fontWeight: FontWeight.w500);
     TextStyle dataTextStyle =
         TextStyle(fontSize: 14, fontWeight: FontWeight.w400, height: 1);
+    final WorkoutDataService workoutDataService = WorkoutDataService();
+    TextEditingController notesController = TextEditingController(text: notes);
 
     return Container(
       decoration: BoxDecoration(
@@ -48,7 +55,36 @@ class MyWorkoutData extends StatelessWidget {
                           context: context,
                           builder: (context) {
                             return AlertDialog(
-                              title: Text(notes),
+                              title: Column(
+                                children: [
+                                  Text("Notes"),
+                                  TextField(
+                                    controller: notesController,
+                                    keyboardType: TextInputType.multiline,
+                                    maxLines: null,
+                                  ),
+                                  Row(
+                                    children: [
+                                      TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                            notesController.text = notes;
+                                          },
+                                          child: Text("Close")),
+                                      TextButton(
+                                          onPressed: () {
+                                            workoutDataService.updateNotes(
+                                                db!,
+                                                title!,
+                                                exercise,
+                                                notesController.text);
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text("Save")),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             );
                           });
                     },

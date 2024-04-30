@@ -72,6 +72,10 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   Widget build(BuildContext context) => isEmailVerified
       ? MyNavBar()
       : Scaffold(
+          appBar: AppBar(
+            centerTitle: true,
+            title: Text("Email Verification"),
+          ),
           body: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
