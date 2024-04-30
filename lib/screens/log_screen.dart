@@ -93,12 +93,17 @@ class _LogScreenState extends State<LogScreen> {
                           icon: Icon(Icons.search),
                           onPressed: () {
                             FocusManager.instance.primaryFocus?.unfocus();
-                            exerciseController.clear();
                             setState(() {
                               exercise = exerciseController.text;
                             });
                           },
                         ),
+                        onSubmitted: (s) {
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          setState(() {
+                            exercise = exerciseController.text;
+                          });
+                        },
                       )),
                     ],
                   ),
@@ -115,11 +120,14 @@ class _LogScreenState extends State<LogScreen> {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.done) {
-                            return MyLineChart(
-                              title: exercise,
-                              spotsWeight: spotsWeight,
-                              // spotsReps: spotsReps
-                            );
+                            if (spotsWeight.isNotEmpty) {
+                              return MyLineChart(
+                                title: exercise,
+                                spotsWeight: spotsWeight,
+                                // spotsReps: spotsReps
+                              );
+                            }
+                            return Center(child: Text('No data found'));
                           } else {
                             return Center(child: CircularProgressIndicator());
                           }

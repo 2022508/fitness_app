@@ -9,6 +9,7 @@ class MyTextField extends StatelessWidget {
   final IconButton? suffixIcon;
   final bool? readOnly;
   final Color? color;
+  final void Function(String)? onSubmitted;
   const MyTextField(
       {super.key,
       required this.hintText,
@@ -16,7 +17,8 @@ class MyTextField extends StatelessWidget {
       required this.prefixIcon,
       this.suffixIcon,
       this.readOnly,
-      this.color});
+      this.color,
+      this.onSubmitted});
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +27,11 @@ class MyTextField extends StatelessWidget {
         controller: controller ?? tempController,
         style: TextStyle(color: color ?? Colors.black),
         readOnly: readOnly ?? false,
-        onSubmitted: (s) {
-          FocusManager.instance.primaryFocus?.unfocus();
-          controller?.clear();
-        },
+        onSubmitted: onSubmitted ??
+            (s) {
+              FocusManager.instance.primaryFocus?.unfocus();
+              controller?.clear();
+            },
         decoration: InputDecoration(
           prefixIcon: prefixIcon,
           suffixIcon: suffixIcon,
