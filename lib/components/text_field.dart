@@ -10,6 +10,7 @@ class MyTextField extends StatelessWidget {
   final bool? readOnly;
   final Color? color;
   final void Function(String)? onSubmitted;
+  final TextInputType? keyboardType;
   const MyTextField(
       {super.key,
       required this.hintText,
@@ -18,12 +19,14 @@ class MyTextField extends StatelessWidget {
       this.suffixIcon,
       this.readOnly,
       this.color,
-      this.onSubmitted});
+      this.onSubmitted,
+      this.keyboardType});
 
   @override
   Widget build(BuildContext context) {
     final TextEditingController tempController = TextEditingController();
     return TextField(
+        keyboardType: keyboardType,
         controller: controller ?? tempController,
         style: TextStyle(color: color ?? Colors.black),
         readOnly: readOnly ?? false,

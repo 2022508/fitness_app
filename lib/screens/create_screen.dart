@@ -1,10 +1,10 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fitness_app/components/elevated_button.dart';
 import 'package:fitness_app/components/text_field.dart';
 import 'package:fitness_app/screens/view_workouts_screen.dart';
+import 'package:fitness_app/screens/workouts_list_screen.dart';
 import 'package:fitness_app/services/workout_data_services.dart';
 import 'package:flutter/material.dart';
 
@@ -43,20 +43,13 @@ class _CreateScreenState extends State<CreateScreen> {
         exerciseController.text.isNotEmpty &&
         weightController.text.isNotEmpty &&
         repsController.text.isNotEmpty) {
-      await fire
-          .collection(FirebaseAuth.instance.currentUser!.email!)
-          .doc('create')
-          .collection('workouts')
-          .doc(nameController.text)
-          .set({
-        exerciseController.text: {
-          "reps": FieldValue.arrayUnion([double.parse(repsController.text)]),
-          "weight":
-              FieldValue.arrayUnion([double.parse(weightController.text)]),
-          if (notesController.text.isNotEmpty) "notes": notesController.text
-        },
-        "dateTime": DateTime.now().toString()
-      }, SetOptions(merge: true));
+      workoutDataService.setWorkoutDataCreate(
+          nameController.text,
+          exerciseController.text,
+          weightController.text,
+          repsController.text,
+          notesController.text,
+          docIDs);
       clearFields();
     } else {
       showDialog(
@@ -86,12 +79,13 @@ class _CreateScreenState extends State<CreateScreen> {
         body: SafeArea(
             child: SingleChildScrollView(
                 child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding:
+                        const EdgeInsets.only(left: 40, right: 40, top: 40),
                     child: Column(children: [
                       Container(
                         width: width,
-                        margin: const EdgeInsets.all(30),
-                        padding: const EdgeInsets.all(10),
+                        // margin: const EdgeInsets.all(30),
+                        padding: const EdgeInsets.all(15),
                         color: Colors.grey[200],
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -184,18 +178,37 @@ class _CreateScreenState extends State<CreateScreen> {
                         ),
                       ),
                       // MyWorkoutData(),
-                      SizedBox(height: 10),
+                      SizedBox(height: 30),
                       // MyWorkoutData(),
-
+                      Row(
+                        children: [
+                          Expanded(child: Divider(height: 10)),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 7, right: 7),
+                            child: Text(
+                              "Recently created",
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ),
+                          Expanded(child: Divider(height: 10)),
+                        ],
+                      ),
+                      SizedBox(height: 10),
                       FutureBuilder(
                           future: workoutDataService.getDocId(docIDs, "create"),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.done) {
+                              int length = docIDs.length;
+                              if (docIDs.length > 3) {
+                                length = 3;
+                              } else {
+                                length = docIDs.length;
+                              }
                               return ListView.builder(
                                   shrinkWrap: true,
                                   scrollDirection: Axis.vertical,
-                                  itemCount: docIDs.length,
+                                  itemCount: length,
                                   itemBuilder: (context, index) {
                                     return MyElevatedButton(
                                         onPressed: () {
@@ -217,6 +230,29 @@ class _CreateScreenState extends State<CreateScreen> {
                               return Center(child: CircularProgressIndicator());
                             }
                           }),
+                      Row(
+                        children: [
+                          Expanded(child: Divider(height: 10)),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 7, right: 7),
+                            child: TextButton(
+                              child: Text("View more",
+                                  style: TextStyle(color: Colors.red)),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => WorkoutListScreen(
+                                        db: "create",
+                                        header: "Workouts Created"),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          Expanded(child: Divider(height: 10)),
+                        ],
+                      ),
                     ])))));
   }
 }

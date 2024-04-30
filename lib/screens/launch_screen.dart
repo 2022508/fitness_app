@@ -15,10 +15,10 @@ import 'package:fitness_app/components/elevated_button.dart';
 import 'package:fitness_app/components/password_text_field.dart';
 import 'package:fitness_app/components/text_field.dart';
 import 'package:fitness_app/services/camera_services.dart';
-import 'package:fitness_app/services/database_services.dart';
+// import 'package:fitness_app/services/database_services.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
+// import 'package:path_provider/path_provider.dart';
 import 'dart:developer';
 
 class LaunchScreen extends StatefulWidget {
@@ -48,11 +48,11 @@ class _LaunchScreenState extends State<LaunchScreen> {
   bool isPswdVisible = true;
   int isModalActive = 0;
 
-  Future<void> _saveUserDetails() async {
-    final path = (await getApplicationDocumentsDirectory()).path;
+  // Future<void> _saveUserDetails() async {
+  //   final path = (await getApplicationDocumentsDirectory()).path;
 
-    await DatabaseServices.addUserDetails(signupEmailController.text, path);
-  }
+  //   await DatabaseServices.addUserDetails(signupEmailController.text, path);
+  // }
 
   Future<void> signIn() async {
     if (signinEmailController.text.isNotEmpty &&
@@ -110,7 +110,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
         if (mounted) {
           Navigator.pop(context);
         }
-        await _saveUserDetails();
+        await cameraServices.saveUserDetails();
         await cameraServices.saveImage(image!, signupEmailController.text);
         await result.user?.updateDisplayName(signupNameController.text);
 
@@ -189,6 +189,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
         Wrap(
           children: [
             MyTextField(
+              keyboardType: TextInputType.emailAddress,
               hintText: "Email",
               controller: signinEmailController,
               prefixIcon: Icon(Icons.account_circle_sharp, color: Colors.white),
@@ -259,6 +260,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
                     Icon(Icons.account_circle_sharp, color: Colors.white),
                 color: Colors.white),
             MyTextField(
+                keyboardType: TextInputType.emailAddress,
                 controller: signupEmailController,
                 hintText: "Email",
                 prefixIcon: Icon(Icons.email, color: Colors.white),
@@ -348,12 +350,19 @@ class _LaunchScreenState extends State<LaunchScreen> {
             contentPadding: EdgeInsets.all(5),
             title: Text("Reset Password"),
             content: TextField(
+                keyboardType: TextInputType.emailAddress,
                 controller: resetPasswordEmailController,
                 decoration: InputDecoration(
                     contentPadding: EdgeInsets.all(10), hintText: "Email")),
             actions: [
               Row(
                 children: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text("Cancel")),
+                  Spacer(),
                   TextButton(
                       onPressed: () async {
                         try {
