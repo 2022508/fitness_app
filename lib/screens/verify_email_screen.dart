@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -29,7 +27,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
     if (!isEmailVerified) {
       sendVerificationEmail();
 
-      timer = Timer.periodic(Duration(seconds: 5), (timer) {
+      timer = Timer.periodic(const Duration(seconds: 5), (timer) {
         checkEmailVerified();
       });
     }
@@ -59,7 +57,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
       setState(() {
         canResendEmail = false;
       });
-      await Future.delayed(Duration(seconds: 5));
+      await Future.delayed(const Duration(seconds: 5));
       setState(() {
         canResendEmail = true;
       });
@@ -70,12 +68,8 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
 
   @override
   Widget build(BuildContext context) => isEmailVerified
-      ? MyNavBar()
+      ? const MyNavBar()
       : Scaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            title: Text("Email Verification"),
-          ),
           body: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

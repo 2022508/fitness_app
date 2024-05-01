@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_print
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fitness_app/components/elevated_button.dart';
 import 'package:fitness_app/components/text_field.dart';
@@ -7,7 +5,7 @@ import 'package:fitness_app/screens/view_workouts_screen.dart';
 import 'package:fitness_app/screens/workouts_list_screen.dart';
 import 'package:fitness_app/services/workout_data_services.dart';
 import 'package:flutter/material.dart';
-// import 'dart:developer';
+import 'package:flutter/services.dart';
 
 import 'package:intl/intl.dart';
 
@@ -43,7 +41,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
         weightController.text.isNotEmpty &&
         repsController.text.isNotEmpty) {
       workoutDataService.setWorkoutDataLog(
-          exerciseController.text,
+          exerciseController.text.toLowerCase(),
           weightController.text,
           repsController.text,
           notesController.text,
@@ -54,13 +52,13 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
       showDialog(
           context: context,
           builder: (context) {
-            return AlertDialog(
+            return const AlertDialog(
               title: Text("Not all fields are filled out!"),
             );
           });
     }
-    setState(() {});
     FocusManager.instance.primaryFocus?.unfocus();
+    setState(() {});
   }
 
   @override
@@ -76,56 +74,65 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
               children: [
                 Container(
                   width: width,
-                  // margin: const EdgeInsets.all(30),
                   padding: const EdgeInsets.all(15),
                   color: Colors.grey[200],
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Enter',
+                      const Text('Enter',
                           style: TextStyle(
                               fontSize: 35, fontWeight: FontWeight.w400)),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       Row(children: [
                         Expanded(
                             child: MyTextField(
                                 controller: exerciseController,
                                 hintText: "Exercise",
-                                prefixIcon: Icon(Icons.fitness_center)))
+                                prefixIcon: const Icon(Icons.fitness_center)))
                       ]),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       Row(
                         children: [
                           Expanded(
                               child: MyTextField(
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: <TextInputFormatter>[
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
                                   controller: weightController,
                                   hintText: "Weight",
-                                  prefixIcon: Icon(Icons.fitness_center))),
-                          SizedBox(width: 10),
+                                  prefixIcon:
+                                      const Icon(Icons.fitness_center))),
+                          const SizedBox(width: 10),
                           Expanded(
                               child: MyTextField(
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: <TextInputFormatter>[
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
                                   controller: repsController,
                                   hintText: "Reps",
-                                  prefixIcon: Icon(Icons.fitness_center))),
+                                  prefixIcon:
+                                      const Icon(Icons.fitness_center))),
                         ],
                       ),
                       Row(
                         children: [
-                          Spacer(),
+                          const Spacer(),
                           TextButton(
                               onPressed: () {
                                 showDialog(
                                     context: context,
                                     builder: (context) {
                                       return AlertDialog(
-                                        contentPadding: EdgeInsets.all(5),
-                                        title: Text("Notes"),
+                                        contentPadding: const EdgeInsets.all(5),
+                                        title: const Text("Notes"),
                                         content: TextField(
                                             controller: notesController,
                                             keyboardType:
                                                 TextInputType.multiline,
                                             maxLines: null,
-                                            decoration: InputDecoration(
+                                            decoration: const InputDecoration(
                                                 contentPadding:
                                                     EdgeInsets.all(10),
                                                 hintText: "Notes")),
@@ -136,14 +143,14 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                                   onPressed: () {
                                                     Navigator.pop(context);
                                                   },
-                                                  child: Text("Close")),
+                                                  child: const Text("Close")),
                                             ],
                                           )
                                         ],
                                       );
                                     });
                               },
-                              child: Text(
+                              child: const Text(
                                 "Notes (optional)",
                               )),
                         ],
@@ -158,12 +165,12 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                     ],
                   ),
                 ),
-                SizedBox(height: 30),
-                Row(
+                const SizedBox(height: 30),
+                const Row(
                   children: [
                     Expanded(child: Divider(height: 10)),
                     Padding(
-                      padding: const EdgeInsets.only(left: 7, right: 7),
+                      padding: EdgeInsets.only(left: 7, right: 7),
                       child: Text(
                         "Recent workouts",
                         style: TextStyle(color: Colors.red),
@@ -172,7 +179,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                     Expanded(child: Divider(height: 10)),
                   ],
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 FutureBuilder(
                     future: workoutDataService.getDocId(docIDs, "log"),
                     builder: (context, snapshot) {
@@ -204,19 +211,18 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                   },
                                   text: DateFormat('HH:mm dd/MM/yy')
                                       .format(DateTime.parse(docIDs[index])));
-                              // text: docIDs[index].toString());
                             });
                       } else {
-                        return Center(child: CircularProgressIndicator());
+                        return const Center(child: CircularProgressIndicator());
                       }
                     }),
                 Row(
                   children: [
-                    Expanded(child: Divider(height: 10)),
+                    const Expanded(child: Divider(height: 10)),
                     Padding(
                       padding: const EdgeInsets.only(left: 7, right: 7),
                       child: TextButton(
-                        child: Text("View more",
+                        child: const Text("View more",
                             style: TextStyle(color: Colors.red)),
                         onPressed: () {
                           Navigator.push(
@@ -229,7 +235,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                         },
                       ),
                     ),
-                    Expanded(child: Divider(height: 10)),
+                    const Expanded(child: Divider(height: 10)),
                   ],
                 ),
               ],

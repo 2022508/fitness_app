@@ -1,6 +1,5 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class MyTextField extends StatelessWidget {
   final String hintText;
@@ -11,6 +10,8 @@ class MyTextField extends StatelessWidget {
   final Color? color;
   final void Function(String)? onSubmitted;
   final TextInputType? keyboardType;
+  final List<TextInputFormatter> inputFormatters;
+
   const MyTextField(
       {super.key,
       required this.hintText,
@@ -20,13 +21,15 @@ class MyTextField extends StatelessWidget {
       this.readOnly,
       this.color,
       this.onSubmitted,
-      this.keyboardType});
+      this.keyboardType,
+      this.inputFormatters = const []});
 
   @override
   Widget build(BuildContext context) {
     final TextEditingController tempController = TextEditingController();
     return TextField(
         keyboardType: keyboardType,
+        inputFormatters: inputFormatters,
         controller: controller ?? tempController,
         style: TextStyle(color: color ?? Colors.black),
         readOnly: readOnly ?? false,

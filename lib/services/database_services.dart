@@ -1,6 +1,3 @@
-// ignore_for_file: prefer_const_declarations, depend_on_referenced_packages
-
-// import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -13,7 +10,7 @@ class DatabaseServices {
   }
 
   static Future<void> _createDatabaseFile(Database db, int version) async {
-    final String sql =
+    const String sql =
         'CREATE TABLE IF NOT EXISTS pfp(userID INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, path TEXT)';
     await db.execute(sql);
   }

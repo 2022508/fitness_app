@@ -1,6 +1,5 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fitness_app/components/search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -23,6 +22,7 @@ class _SupportPageState extends State<SupportPage> {
   TextEditingController controller = TextEditingController();
 
   Future<void> voiceSearch() async {
+    FocusManager.instance.primaryFocus?.unfocus();
     SpeechToText speech = SpeechToText();
     bool available = await speech.initialize(
       onStatus: (status) => log('onStatus: $status'),
@@ -32,8 +32,9 @@ class _SupportPageState extends State<SupportPage> {
       speech.listen(
         onResult: (result) {
           controller.text = result.recognizedWords;
+          searchExercise(controller.text);
         },
-        listenFor: Duration(seconds: 5),
+        listenFor: const Duration(seconds: 5),
       );
     } else {
       log('The user has denied the use of speech recognition.');
@@ -92,43 +93,20 @@ class _SupportPageState extends State<SupportPage> {
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: [
-                  TextField(
-                    controller: controller,
-                    textInputAction: TextInputAction.go,
-                    onSubmitted: (s) {
-                      FocusManager.instance.primaryFocus?.unfocus();
-                    },
-                    onChanged: searchExercise,
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    decoration: InputDecoration(
-                      hintText: 'Search exercises',
-                      prefixIcon: IconButton(
-                        onPressed: () {
-                          FocusManager.instance.primaryFocus?.unfocus();
-                        },
-                        icon: Icon(
-                          Icons.search,
-                          size: 30,
-                        ),
-                      ),
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          voiceSearch();
-                        },
-                        icon: Icon(
-                          Icons.mic,
-                          size: 30,
-                        ),
-                      ),
-                      hintStyle: TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+                  MySearchBar(
+                      controller: controller,
+                      onSubmitted: (s) {
+                        searchExercise(controller.text);
+                        FocusManager.instance.primaryFocus?.unfocus();
+                      },
+                      onPressed: () {
+                        searchExercise(controller.text);
+                        FocusManager.instance.primaryFocus?.unfocus();
+                      },
+                      onPressedVoice: () {
+                        voiceSearch();
+                      },
+                      onChanged: searchExercise),
                   Container(
                     width: width,
                     color: Colors.grey[200],

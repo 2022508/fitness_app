@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 
 class MyPasswordTextField extends StatefulWidget {
@@ -8,6 +6,7 @@ class MyPasswordTextField extends StatefulWidget {
   final Color? color;
   final Icon? prefixIcon;
   final IconButton? suffixIcon;
+
   const MyPasswordTextField(
       {super.key,
       required this.hintText,
@@ -22,7 +21,7 @@ class MyPasswordTextField extends StatefulWidget {
 
 class _MyPasswordTextFieldState extends State<MyPasswordTextField> {
   bool isPswdVisible = true;
-  Icon pswdVisible = Icon(
+  Icon pswdVisible = const Icon(
     Icons.visibility_off_outlined,
     color: Colors.white,
   );
@@ -36,8 +35,8 @@ class _MyPasswordTextFieldState extends State<MyPasswordTextField> {
         style: TextStyle(color: widget.color ?? Colors.black),
         obscureText: isPswdVisible,
         decoration: InputDecoration(
-            prefixIcon:
-                widget.prefixIcon ?? Icon(Icons.lock, color: Colors.white),
+            prefixIcon: widget.prefixIcon ??
+                const Icon(Icons.lock, color: Colors.white),
             hintText: widget.hintText,
             hintStyle: TextStyle(color: widget.color ?? Colors.black),
             enabledBorder: UnderlineInputBorder(
@@ -51,11 +50,12 @@ class _MyPasswordTextFieldState extends State<MyPasswordTextField> {
                     onPressed: () {
                       setState(() {
                         if (isPswdVisible) {
-                          pswdVisible = Icon(Icons.visibility_outlined,
+                          pswdVisible = const Icon(Icons.visibility_outlined,
                               color: Colors.white);
                           isPswdVisible = false;
                         } else {
-                          pswdVisible = Icon(Icons.visibility_off_outlined,
+                          pswdVisible = const Icon(
+                              Icons.visibility_off_outlined,
                               color: Colors.white);
                           isPswdVisible = true;
                         }

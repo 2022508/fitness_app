@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 
 class MyElevatedButton extends StatelessWidget {
@@ -24,12 +22,13 @@ class MyElevatedButton extends StatelessWidget {
     return ElevatedButton(
         onPressed: onPressed ?? () {},
         style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor ?? Color.fromRGBO(201, 56, 11, 1),
+          backgroundColor:
+              backgroundColor ?? const Color.fromRGBO(201, 56, 11, 1),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
           ),
           side: BorderSide(
-              color: borderColor ?? Color.fromARGB(255, 247, 184, 24),
+              color: borderColor ?? const Color.fromARGB(255, 247, 184, 24),
               width: 2.5),
         ),
         child: Text(text,

@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'package:fitness_app/main.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
@@ -19,7 +17,7 @@ class NotificationServices {
             onlyAlertOnce: true,
             playSound: true,
             criticalAlerts: true,
-            defaultColor: Color(0xFF9D50DD),
+            defaultColor: const Color(0xFF9D50DD),
             ledColor: Colors.white,
           ),
         ],
@@ -43,7 +41,7 @@ class NotificationServices {
     if (payload['navigate'] == 'true') {
       navigatorKey.currentState?.push(
         MaterialPageRoute(
-          builder: (_) => (MyApp()),
+          builder: (_) => (const MyApp()),
         ),
       );
     }
