@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors, use_build_context_synchronously
-
 // https://www.youtube.com/watch?v=t_GcR_9-NcY
 // used to help delete the users data from firestore
 
@@ -16,8 +14,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:developer';
 
-// import 'package:path_provider/path_provider.dart';
-
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
 
@@ -27,7 +23,7 @@ class AccountScreen extends StatefulWidget {
 
 class _AccountScreenState extends State<AccountScreen> {
   bool isPswdVisible = true;
-  Icon pswdVisible = Icon(Icons.visibility_off_outlined);
+  Icon pswdVisible = const Icon(Icons.visibility_off_outlined);
   bool isImageLoaded = false;
   bool isUserLoaded = false;
   final TextEditingController nameController = TextEditingController();
@@ -103,7 +99,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     await cameraServices.getPhotoLoggedIn(ImageSource.camera);
                 setState(() {});
               },
-              icon: Icon(
+              icon: const Icon(
                 Icons.camera_alt,
                 size: 100,
                 color: Colors.white,
@@ -117,7 +113,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     await cameraServices.getPhotoLoggedIn(ImageSource.gallery);
                 setState(() {});
               },
-              icon: Icon(Icons.photo, size: 100, color: Colors.white),
+              icon: const Icon(Icons.photo, size: 100, color: Colors.white),
             ),
           )
         ],
@@ -143,19 +139,18 @@ class _AccountScreenState extends State<AccountScreen> {
       try {
         await fire.currentUser?.updatePassword(passwordController.text);
         passwordController.clear();
-        alertDialog(Text("Password updated."));
+        alertDialog(const Text("Password updated."));
       } on FirebaseAuthException catch (e) {
-        Navigator.pop(context);
         if (e.code == 'weak-password') {
-          alertDialog(Text("The password provided is too weak."));
+          alertDialog(const Text("The password provided is too weak."));
         } else if (e.code == 'requires-recent-login') {
-          alertDialog(Text("Please log in to the app again."));
+          alertDialog(const Text("Please log in to the app again."));
         } else {
-          alertDialog(Text("An error occured."));
+          alertDialog(const Text("An error occured."));
         }
       }
     } else {
-      alertDialog(Text("Password cannot be empty."));
+      alertDialog(const Text("Password cannot be empty."));
     }
     FocusManager.instance.primaryFocus?.unfocus();
   }
@@ -182,11 +177,10 @@ class _AccountScreenState extends State<AccountScreen> {
       // delete user from local database
       DatabaseServices.deleteUserDetails(email);
     } on FirebaseAuthException catch (e) {
-      Navigator.pop(context);
       if (e.code == 'requires-recent-login') {
-        alertDialog(Text("Please log in to the app again."));
+        alertDialog(const Text("Please log in to the app again."));
       } else {
-        alertDialog(Text("An error occured."));
+        alertDialog(const Text("An error occured."));
       }
     }
   }
@@ -204,17 +198,17 @@ class _AccountScreenState extends State<AccountScreen> {
         body: SafeArea(
       child: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           child: Center(
               child: Column(
             children: [
               Stack(
                 children: [
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   CircleAvatar(
                     radius: 100,
                     backgroundImage: image == null
-                        ? AssetImage('assets/images/pfp.jpg')
+                        ? const AssetImage('assets/images/pfp.jpg')
                         : Image.file(File(image!.path)).image,
                   ),
                   Positioned(
@@ -231,52 +225,54 @@ class _AccountScreenState extends State<AccountScreen> {
                   ),
                 ],
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               if (isUserLoaded)
                 Column(
                   children: [
                     MyTextField(
                         controller: nameController,
                         hintText: "Name",
-                        prefixIcon: Icon(Icons.account_circle_sharp),
+                        prefixIcon: const Icon(Icons.account_circle_sharp),
                         suffixIcon: IconButton(
-                          icon: Icon(Icons.upload, color: Colors.red, size: 30),
+                          icon: const Icon(Icons.upload,
+                              color: Colors.red, size: 30),
                           onPressed: () {
                             fire.currentUser!
                                 .updateDisplayName(nameController.text);
-                            alertDialog(Text("Name updated."));
+                            alertDialog(const Text("Name updated."));
                             FocusManager.instance.primaryFocus?.unfocus();
                           },
                         )),
                     MyTextField(
                       controller: emailController,
                       hintText: "email@gmail.com",
-                      prefixIcon: Icon(Icons.email),
+                      prefixIcon: const Icon(Icons.email),
                       readOnly: true,
                     ),
                     MyPasswordTextField(
                       controller: passwordController,
                       hintText: "New password",
                       color: Colors.black,
-                      prefixIcon: Icon(Icons.lock),
+                      prefixIcon: const Icon(Icons.lock),
                       suffixIcon: IconButton(
-                        icon: Icon(Icons.upload, color: Colors.red, size: 30),
+                        icon: const Icon(Icons.upload,
+                            color: Colors.red, size: 30),
                         onPressed: updatePassword,
                       ),
                     ),
                     Row(
                       children: [
-                        Expanded(child: Divider(height: 10)),
+                        const Expanded(child: Divider(height: 10)),
                         Padding(
                           padding: const EdgeInsets.only(left: 7, right: 7),
                           child: TextButton(
-                              child: Text("Delete account",
+                              child: const Text("Delete account",
                                   style: TextStyle(color: Colors.red)),
                               onPressed: () async {
                                 await deleteUser();
                               }),
                         ),
-                        Expanded(child: Divider(height: 10)),
+                        const Expanded(child: Divider(height: 10)),
                       ],
                     ),
                     MyElevatedButton(
@@ -287,7 +283,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   ],
                 )
               else
-                Center(child: CircularProgressIndicator()),
+                const Center(child: CircularProgressIndicator()),
             ],
           )),
         ),

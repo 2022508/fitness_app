@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fitness_app/components/workout_data_container.dart';
 import 'package:fitness_app/services/workout_data_services.dart';
@@ -53,8 +51,8 @@ class ViewWorkoutsScreen extends StatelessWidget {
                         (key, value) => key == 'dates' || key == 'dateTime');
                   }
                   return Container(
-                    margin: EdgeInsets.all(10),
-                    padding: EdgeInsets.all(10),
+                    margin: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
                       borderRadius: BorderRadius.circular(10.0),
@@ -66,7 +64,7 @@ class ViewWorkoutsScreen extends StatelessWidget {
                     child: Column(
                       children: [
                         Text(title),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         for (int i = 0;
                             i < workoutData[workoutName].length;
                             i++)
@@ -91,7 +89,7 @@ class ViewWorkoutsScreen extends StatelessWidget {
                     ),
                   );
                 } else {
-                  return CircularProgressIndicator();
+                  return const CircularProgressIndicator();
                 }
               },
             ),

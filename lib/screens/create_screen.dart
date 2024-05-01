@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fitness_app/components/elevated_button.dart';
 import 'package:fitness_app/components/text_field.dart';
@@ -7,6 +5,7 @@ import 'package:fitness_app/screens/view_workouts_screen.dart';
 import 'package:fitness_app/screens/workouts_list_screen.dart';
 import 'package:fitness_app/services/workout_data_services.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 // https://stackoverflow.com/questions/69501224/flutterfire-update-array-instead-of-replacing-it
 // used to set the data for the workouts into firebase
@@ -20,9 +19,9 @@ class CreateScreen extends StatefulWidget {
 
 class _CreateScreenState extends State<CreateScreen> {
   TextStyle exerciseTextStyle =
-      TextStyle(fontSize: 35, fontWeight: FontWeight.w400);
+      const TextStyle(fontSize: 35, fontWeight: FontWeight.w400);
   TextStyle dataTextStyle =
-      TextStyle(fontSize: 20, fontWeight: FontWeight.w300);
+      const TextStyle(fontSize: 20, fontWeight: FontWeight.w300);
 
   TextEditingController nameController = TextEditingController();
   TextEditingController exerciseController = TextEditingController();
@@ -45,7 +44,7 @@ class _CreateScreenState extends State<CreateScreen> {
         repsController.text.isNotEmpty) {
       workoutDataService.setWorkoutDataCreate(
           nameController.text,
-          exerciseController.text,
+          exerciseController.text.toLowerCase(),
           weightController.text,
           repsController.text,
           notesController.text,
@@ -55,7 +54,7 @@ class _CreateScreenState extends State<CreateScreen> {
       showDialog(
           context: context,
           builder: (context) {
-            return AlertDialog(
+            return const AlertDialog(
               title: Text("Not all fields are filled out!"),
             );
           });
@@ -84,13 +83,12 @@ class _CreateScreenState extends State<CreateScreen> {
                     child: Column(children: [
                       Container(
                         width: width,
-                        // margin: const EdgeInsets.all(30),
                         padding: const EdgeInsets.all(15),
                         color: Colors.grey[200],
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Create',
+                            const Text('Create',
                                 style: TextStyle(
                                     fontSize: 35, fontWeight: FontWeight.w400)),
                             Row(children: [
@@ -98,54 +96,67 @@ class _CreateScreenState extends State<CreateScreen> {
                                   child: MyTextField(
                                       controller: nameController,
                                       hintText: "Workout name",
-                                      prefixIcon: Icon(Icons.fitness_center)))
+                                      prefixIcon:
+                                          const Icon(Icons.fitness_center)))
                             ]),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             Row(children: [
                               Expanded(
                                   child: MyTextField(
                                       controller: exerciseController,
                                       hintText: "Exercise",
-                                      prefixIcon: Icon(Icons.fitness_center)))
+                                      prefixIcon:
+                                          const Icon(Icons.fitness_center)))
                             ]),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             Row(
                               children: [
                                 Expanded(
                                     child: MyTextField(
+                                        keyboardType: TextInputType.number,
+                                        inputFormatters: <TextInputFormatter>[
+                                          FilteringTextInputFormatter.digitsOnly
+                                        ],
                                         controller: weightController,
                                         hintText: "Weight",
                                         prefixIcon:
-                                            Icon(Icons.fitness_center))),
-                                SizedBox(width: 10),
+                                            const Icon(Icons.fitness_center))),
+                                const SizedBox(width: 10),
                                 Expanded(
                                     child: MyTextField(
+                                        keyboardType: TextInputType.number,
+                                        inputFormatters: <TextInputFormatter>[
+                                          FilteringTextInputFormatter.digitsOnly
+                                        ],
                                         controller: repsController,
                                         hintText: "Reps",
                                         prefixIcon:
-                                            Icon(Icons.fitness_center))),
+                                            const Icon(Icons.fitness_center))),
                               ],
                             ),
                             Row(
                               children: [
-                                Spacer(),
+                                const Spacer(),
                                 TextButton(
                                     onPressed: () {
                                       showDialog(
                                           context: context,
                                           builder: (context) {
                                             return AlertDialog(
-                                              contentPadding: EdgeInsets.all(5),
-                                              title: Text("Notes"),
+                                              contentPadding:
+                                                  const EdgeInsets.all(5),
+                                              title: const Text("Notes"),
                                               content: TextField(
                                                   controller: notesController,
-                                                  keyboardType:
-                                                      TextInputType.multiline,
+                                                  keyboardType: TextInputType
+                                                      .multiline,
                                                   maxLines: null,
-                                                  decoration: InputDecoration(
-                                                      contentPadding:
-                                                          EdgeInsets.all(10),
-                                                      hintText: "Notes")),
+                                                  decoration:
+                                                      const InputDecoration(
+                                                          contentPadding:
+                                                              EdgeInsets.all(
+                                                                  10),
+                                                          hintText: "Notes")),
                                               actions: [
                                                 Row(
                                                   children: [
@@ -154,19 +165,19 @@ class _CreateScreenState extends State<CreateScreen> {
                                                           Navigator.pop(
                                                               context);
                                                         },
-                                                        child: Text("Close")),
+                                                        child: const Text(
+                                                            "Close")),
                                                   ],
                                                 )
                                               ],
                                             );
                                           });
                                     },
-                                    child: Text(
+                                    child: const Text(
                                       "Notes (optional)",
                                     )),
                               ],
                             ),
-                            // SizedBox(height: 5),
                             Row(
                               children: [
                                 Expanded(
@@ -177,14 +188,12 @@ class _CreateScreenState extends State<CreateScreen> {
                           ],
                         ),
                       ),
-                      // MyWorkoutData(),
-                      SizedBox(height: 30),
-                      // MyWorkoutData(),
-                      Row(
+                      const SizedBox(height: 30),
+                      const Row(
                         children: [
                           Expanded(child: Divider(height: 10)),
                           Padding(
-                            padding: const EdgeInsets.only(left: 7, right: 7),
+                            padding: EdgeInsets.only(left: 7, right: 7),
                             child: Text(
                               "Recently created",
                               style: TextStyle(color: Colors.red),
@@ -193,7 +202,7 @@ class _CreateScreenState extends State<CreateScreen> {
                           Expanded(child: Divider(height: 10)),
                         ],
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       FutureBuilder(
                           future: workoutDataService.getDocId(docIDs, "create"),
                           builder: (context, snapshot) {
@@ -227,16 +236,17 @@ class _CreateScreenState extends State<CreateScreen> {
                                         text: docIDs[index].toString());
                                   });
                             } else {
-                              return Center(child: CircularProgressIndicator());
+                              return const Center(
+                                  child: CircularProgressIndicator());
                             }
                           }),
                       Row(
                         children: [
-                          Expanded(child: Divider(height: 10)),
+                          const Expanded(child: Divider(height: 10)),
                           Padding(
                             padding: const EdgeInsets.only(left: 7, right: 7),
                             child: TextButton(
-                              child: Text("View more",
+                              child: const Text("View more",
                                   style: TextStyle(color: Colors.red)),
                               onPressed: () {
                                 Navigator.push(
@@ -250,7 +260,7 @@ class _CreateScreenState extends State<CreateScreen> {
                               },
                             ),
                           ),
-                          Expanded(child: Divider(height: 10)),
+                          const Expanded(child: Divider(height: 10)),
                         ],
                       ),
                     ])))));

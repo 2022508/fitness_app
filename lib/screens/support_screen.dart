@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -23,6 +21,7 @@ class _SupportPageState extends State<SupportPage> {
   TextEditingController controller = TextEditingController();
 
   Future<void> voiceSearch() async {
+    FocusManager.instance.primaryFocus?.unfocus();
     SpeechToText speech = SpeechToText();
     bool available = await speech.initialize(
       onStatus: (status) => log('onStatus: $status'),
@@ -32,8 +31,9 @@ class _SupportPageState extends State<SupportPage> {
       speech.listen(
         onResult: (result) {
           controller.text = result.recognizedWords;
+          searchExercise(controller.text);
         },
-        listenFor: Duration(seconds: 5),
+        listenFor: const Duration(seconds: 5),
       );
     } else {
       log('The user has denied the use of speech recognition.');
@@ -96,10 +96,11 @@ class _SupportPageState extends State<SupportPage> {
                     controller: controller,
                     textInputAction: TextInputAction.go,
                     onSubmitted: (s) {
+                      searchExercise(controller.text);
                       FocusManager.instance.primaryFocus?.unfocus();
                     },
                     onChanged: searchExercise,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
                     ),
@@ -107,9 +108,10 @@ class _SupportPageState extends State<SupportPage> {
                       hintText: 'Search exercises',
                       prefixIcon: IconButton(
                         onPressed: () {
+                          searchExercise(controller.text);
                           FocusManager.instance.primaryFocus?.unfocus();
                         },
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.search,
                           size: 30,
                         ),
@@ -118,12 +120,12 @@ class _SupportPageState extends State<SupportPage> {
                         onPressed: () {
                           voiceSearch();
                         },
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.mic,
                           size: 30,
                         ),
                       ),
-                      hintStyle: TextStyle(
+                      hintStyle: const TextStyle(
                         fontSize: 30,
                         fontWeight: FontWeight.bold,
                       ),

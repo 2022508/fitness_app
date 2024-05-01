@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'package:fitness_app/services/workout_data_services.dart';
 import 'package:flutter/material.dart';
 
@@ -25,9 +23,9 @@ class MyWorkoutData extends StatelessWidget {
     double width = MediaQuery.of(context).size.width;
     final double paddingWidth = width * 0.02;
     TextStyle exerciseTextStyle =
-        TextStyle(fontSize: 20, fontWeight: FontWeight.w500);
+        const TextStyle(fontSize: 20, fontWeight: FontWeight.w500);
     TextStyle dataTextStyle =
-        TextStyle(fontSize: 14, fontWeight: FontWeight.w400, height: 1);
+        const TextStyle(fontSize: 14, fontWeight: FontWeight.w400, height: 1);
     final WorkoutDataService workoutDataService = WorkoutDataService();
     TextEditingController notesController = TextEditingController(text: notes);
 
@@ -37,7 +35,7 @@ class MyWorkoutData extends StatelessWidget {
         borderRadius: BorderRadius.circular(10.0),
       ),
       padding: EdgeInsets.all(paddingWidth),
-      margin: EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: 10),
       child: Row(
         children: [
           Container(
@@ -47,8 +45,10 @@ class MyWorkoutData extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  Flexible(child: Text(exercise, style: exerciseTextStyle)),
-                  Spacer(),
+                  Flexible(
+                    fit: FlexFit.tight,
+                    child: Text(exercise, style: exerciseTextStyle),
+                  ),
                   IconButton(
                     onPressed: () {
                       showDialog(
@@ -57,7 +57,7 @@ class MyWorkoutData extends StatelessWidget {
                             return AlertDialog(
                               title: Column(
                                 children: [
-                                  Text("Notes"),
+                                  const Text("Notes"),
                                   TextField(
                                     controller: notesController,
                                     keyboardType: TextInputType.multiline,
@@ -70,7 +70,7 @@ class MyWorkoutData extends StatelessWidget {
                                             Navigator.pop(context);
                                             notesController.text = notes;
                                           },
-                                          child: Text("Close")),
+                                          child: const Text("Close")),
                                       TextButton(
                                           onPressed: () {
                                             workoutDataService.updateNotes(
@@ -80,7 +80,7 @@ class MyWorkoutData extends StatelessWidget {
                                                 notesController.text);
                                             Navigator.pop(context);
                                           },
-                                          child: Text("Save")),
+                                          child: const Text("Save")),
                                     ],
                                   ),
                                 ],
@@ -88,7 +88,7 @@ class MyWorkoutData extends StatelessWidget {
                             );
                           });
                     },
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.notes,
                       color: Colors.blue,
                       size: 30,

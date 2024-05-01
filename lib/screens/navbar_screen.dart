@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'package:fitness_app/screens/account_screen.dart';
 import 'package:fitness_app/screens/create_screen.dart';
 import 'package:fitness_app/screens/support_screen.dart';
@@ -22,18 +20,17 @@ class _MyNavBarState extends State<MyNavBar> {
 
   int myIndex = 0;
   List<Widget> myPages = [
-    WorkoutScreen(),
-    CreateScreen(),
-    LogScreen(),
-    SupportPage(),
-    AccountScreen(),
+    const WorkoutScreen(),
+    const CreateScreen(),
+    const LogScreen(),
+    const SupportPage(),
+    const AccountScreen(),
   ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
           child: PageView(
-        // index: myIndex,
         controller: pageController,
         children: myPages,
         onPageChanged: (value) {
@@ -47,11 +44,11 @@ class _MyNavBarState extends State<MyNavBar> {
         },
       )),
       bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Color.fromRGBO(201, 56, 11, 1),
+          backgroundColor: const Color.fromRGBO(201, 56, 11, 1),
           onTap: (value) {
             if (mounted) {
               pageController.animateToPage(value,
-                  duration: Duration(milliseconds: 300),
+                  duration: const Duration(milliseconds: 300),
                   curve: Curves.fastOutSlowIn);
             }
           },
@@ -59,7 +56,7 @@ class _MyNavBarState extends State<MyNavBar> {
           selectedItemColor: Colors.white,
           unselectedItemColor: Colors.black,
           type: BottomNavigationBarType.fixed,
-          items: [
+          items: const [
             BottomNavigationBarItem(
                 icon: Icon(Icons.fitness_center), label: 'Workout'),
             BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Create'),

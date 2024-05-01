@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_const_declarations, use_build_context_synchronously
-
 // https://www.youtube.com/watch?v=_3W-JuIVFlg
 // used for the log in and log out system
 
@@ -15,10 +13,8 @@ import 'package:fitness_app/components/elevated_button.dart';
 import 'package:fitness_app/components/password_text_field.dart';
 import 'package:fitness_app/components/text_field.dart';
 import 'package:fitness_app/services/camera_services.dart';
-// import 'package:fitness_app/services/database_services.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-// import 'package:path_provider/path_provider.dart';
 import 'dart:developer';
 
 class LaunchScreen extends StatefulWidget {
@@ -44,7 +40,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
   XFile? image;
 
   String title = "FITNESS APP";
-  Icon pswdVisible = Icon(Icons.visibility_off_outlined);
+  Icon pswdVisible = const Icon(Icons.visibility_off_outlined);
   bool isPswdVisible = true;
   int isModalActive = 0;
 
@@ -62,7 +58,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
       showDialog(
           context: context,
           builder: (context) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           });
       try {
         await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -73,17 +69,19 @@ class _LaunchScreenState extends State<LaunchScreen> {
           Navigator.pop(context);
         }
       } on FirebaseAuthException catch (e) {
-        Navigator.pop(context);
-        if (e.code == 'user-not-found') {
-          alertDialog(Text("No user found for that email."));
-        } else if (e.code == 'wrong-password') {
-          alertDialog(Text("Wrong password provided for that user."));
-        } else if (e.code == 'invalid-email') {
-          alertDialog(Text("Invalid email provided."));
+        if (mounted) {
+          Navigator.pop(context);
+        }
+        if (e.code == 'invalid-email' ||
+            e.code == 'user-not-found' ||
+            e.code == 'wrong-password') {
+          alertDialog(const Text("Invalid details provided."));
+        } else {
+          alertDialog(const Text("An error occured."));
         }
       }
     } else {
-      alertDialog(Text("Please fill in all fields."));
+      alertDialog(const Text("Please fill in all fields."));
       //stops the leyboard popping back up after the dialog is closed
       FocusManager.instance.primaryFocus?.unfocus();
     }
@@ -99,7 +97,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
       showDialog(
           context: context,
           builder: (context) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           });
       try {
         UserCredential result = await FirebaseAuth.instance
@@ -116,19 +114,20 @@ class _LaunchScreenState extends State<LaunchScreen> {
 
         //profile picture upload stuff
       } on FirebaseAuthException catch (e) {
-        Navigator.pop(context);
+        if (mounted) {
+          Navigator.pop(context);
+        }
         if (e.code == 'weak-password') {
-          alertDialog(Text("The password provided is too weak."));
-        } else if (e.code == 'email-already-in-use') {
-          alertDialog(Text("The account already exists for that email."));
-        } else if (e.code == 'invalid-email') {
-          alertDialog(Text("Invalid email provided."));
+          alertDialog(const Text("The password provided is too weak."));
+        } else if (e.code == 'invalid-email' ||
+            e.code == 'email-already-in-use') {
+          alertDialog(const Text("Invalid email provided."));
         } else {
-          alertDialog(Text("An error occured."));
+          alertDialog(const Text("An error occured."));
         }
       }
     } else {
-      alertDialog(Text("Please fill in all fields."));
+      alertDialog(const Text("Please fill in all fields."));
       //stops the leyboard popping back up after the dialog is closed
       FocusManager.instance.primaryFocus?.unfocus();
     }
@@ -192,7 +191,8 @@ class _LaunchScreenState extends State<LaunchScreen> {
               keyboardType: TextInputType.emailAddress,
               hintText: "Email",
               controller: signinEmailController,
-              prefixIcon: Icon(Icons.account_circle_sharp, color: Colors.white),
+              prefixIcon:
+                  const Icon(Icons.account_circle_sharp, color: Colors.white),
               color: Colors.white,
             ),
             MyPasswordTextField(
@@ -201,10 +201,10 @@ class _LaunchScreenState extends State<LaunchScreen> {
                 color: Colors.white),
             Row(
               children: [
-                Spacer(),
+                const Spacer(),
                 TextButton(
                     onPressed: sendVerificationEmail,
-                    child: Text(
+                    child: const Text(
                       "Forgot password?",
                       style: TextStyle(color: Colors.white, fontSize: 16),
                     )),
@@ -218,7 +218,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
                   }),
               contentPadding: EdgeInsets.zero,
             ),
-            Row(
+            const Row(
               children: [
                 Expanded(child: Divider(height: 10, color: Colors.white)),
                 Padding(
@@ -257,13 +257,13 @@ class _LaunchScreenState extends State<LaunchScreen> {
                 controller: signupNameController,
                 hintText: "Name",
                 prefixIcon:
-                    Icon(Icons.account_circle_sharp, color: Colors.white),
+                    const Icon(Icons.account_circle_sharp, color: Colors.white),
                 color: Colors.white),
             MyTextField(
                 keyboardType: TextInputType.emailAddress,
                 controller: signupEmailController,
                 hintText: "Email",
-                prefixIcon: Icon(Icons.email, color: Colors.white),
+                prefixIcon: const Icon(Icons.email, color: Colors.white),
                 color: Colors.white),
             MyPasswordTextField(
                 controller: signupPasswordController,
@@ -274,7 +274,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
               child: Center(
                   child: IconButton(
                       onPressed: pfpModalBottomSheet,
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.add_a_photo,
                         color: Colors.red,
                         size: 30,
@@ -288,7 +288,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
                   }),
               contentPadding: EdgeInsets.zero,
             ),
-            Row(
+            const Row(
               children: [
                 Expanded(child: Divider(height: 10, color: Colors.white)),
                 Padding(
@@ -320,7 +320,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
               onPressed: () async {
                 image = await cameraServices.getPhoto(ImageSource.camera);
               },
-              icon: Icon(
+              icon: const Icon(
                 Icons.camera_alt,
                 size: 100,
                 color: Colors.white,
@@ -332,7 +332,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
               onPressed: () async {
                 image = await cameraServices.getPhoto(ImageSource.gallery);
               },
-              icon: Icon(Icons.photo, size: 100, color: Colors.white),
+              icon: const Icon(Icons.photo, size: 100, color: Colors.white),
             ),
           )
         ],
@@ -347,12 +347,12 @@ class _LaunchScreenState extends State<LaunchScreen> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            contentPadding: EdgeInsets.all(5),
-            title: Text("Reset Password"),
+            contentPadding: const EdgeInsets.all(5),
+            title: const Text("Reset Password"),
             content: TextField(
                 keyboardType: TextInputType.emailAddress,
                 controller: resetPasswordEmailController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                     contentPadding: EdgeInsets.all(10), hintText: "Email")),
             actions: [
               Row(
@@ -361,8 +361,8 @@ class _LaunchScreenState extends State<LaunchScreen> {
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: Text("Cancel")),
-                  Spacer(),
+                      child: const Text("Cancel")),
+                  const Spacer(),
                   TextButton(
                       onPressed: () async {
                         try {
@@ -371,17 +371,19 @@ class _LaunchScreenState extends State<LaunchScreen> {
                           setState(() {
                             canResendEmail = false;
                           });
-                          await Future.delayed(Duration(seconds: 5));
+                          await Future.delayed(const Duration(seconds: 5));
                           setState(() {
                             canResendEmail = true;
                           });
                         } catch (e) {
                           log(e.toString());
                         }
-                        Navigator.pop(context);
-                        alertDialog(Text("Email sent"));
+                        if (context.mounted) {
+                          Navigator.pop(context);
+                        }
+                        alertDialog(const Text("Email sent"));
                       },
-                      child: Text("Send")),
+                      child: const Text("Send")),
                 ],
               )
             ],
@@ -393,7 +395,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
       setState(() {
         canResendEmail = false;
       });
-      await Future.delayed(Duration(seconds: 10));
+      await Future.delayed(const Duration(seconds: 10));
       setState(() {
         canResendEmail = true;
       });
@@ -418,7 +420,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
       body: SafeArea(
         child: Container(
           // height: double.infinity,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             image: DecorationImage(
               image: AssetImage("assets/images/background.jpg"),
               fit: BoxFit.fill,
@@ -430,7 +432,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
               Align(
                 alignment: Alignment.center,
                 child: Text(title,
-                    style: TextStyle(
+                    style: const TextStyle(
                         fontSize: 40,
                         color: Colors.white,
                         fontWeight: FontWeight.bold)),
@@ -456,7 +458,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
                     ],
                   );
                 } else {
-                  return SizedBox();
+                  return const SizedBox();
                 }
               }),
             ],

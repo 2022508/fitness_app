@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, must_be_immutable
+// ignore_for_file: must_be_immutable
 
 import 'package:fitness_app/components/elevated_button.dart';
 import 'package:fitness_app/screens/view_workouts_screen.dart';
@@ -60,7 +60,8 @@ class WorkoutListScreen extends StatelessWidget {
                                 // text: docIDs[index].toString());
                               });
                         } else {
-                          return Center(child: CircularProgressIndicator());
+                          return const Center(
+                              child: CircularProgressIndicator());
                         }
                       }),
                 ],

@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,7 +6,8 @@ import 'package:fitness_app/components/chart.dart';
 import 'package:fitness_app/components/text_field.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-// import 'dart:developer';
+import 'package:speech_to_text/speech_to_text.dart';
+import 'dart:developer';
 
 class LogScreen extends StatefulWidget {
   const LogScreen({super.key});
@@ -20,22 +21,17 @@ class _LogScreenState extends State<LogScreen> {
   String exercise = 'bench press';
   final Map<String, dynamic> workoutData = {};
   List<FlSpot> spotsWeight = [];
-  // List<FlSpot> spotsReps = [];
   var fire = FirebaseFirestore.instance;
 
   Future getWorkoutData(String exercise) async {
     workoutData.clear();
     spotsWeight.clear();
-
-    // spotsReps.clear();
     await fire
         .collection(FirebaseAuth.instance.currentUser!.email!)
         .doc('log')
         .collection('workouts')
         .get()
         .then((querySnapshot) {
-      // double averageWeight = 0;
-      // double date = 0;
       List<dynamic> exerciseWeight = [];
       for (var result in querySnapshot.docs) {
         workoutData.addAll({result.id: result.data()});
@@ -43,7 +39,6 @@ class _LogScreenState extends State<LogScreen> {
       workoutData.forEach((key, value) {
         double averageWeight = 0;
         if (value.containsKey(exercise)) {
-          // weight
           exerciseWeight = value[exercise]['weight'];
           for (var element in exerciseWeight) {
             averageWeight += element;
@@ -58,7 +53,28 @@ class _LogScreenState extends State<LogScreen> {
         }
       });
     });
-    // log(workoutData.toString());
+  }
+
+  Future<void> voiceSearch() async {
+    FocusManager.instance.primaryFocus?.unfocus();
+    SpeechToText speech = SpeechToText();
+    bool available = await speech.initialize(
+      onStatus: (status) => print('onStatus: $status'),
+      onError: (errorNotification) => print('onError: $errorNotification'),
+    );
+    if (available) {
+      speech.listen(
+        onResult: (result) {
+          exerciseController.text = result.recognizedWords;
+          setState(() {
+            exercise = exerciseController.text.toLowerCase();
+          });
+        },
+        listenFor: const Duration(seconds: 5),
+      );
+    } else {
+      print('The user has denied the use of speech recognition.');
+    }
   }
 
   @override
@@ -72,46 +88,79 @@ class _LogScreenState extends State<LogScreen> {
           child: Center(
             child: Column(
               children: [
-                SizedBox(height: 20),
-                Container(
-                  width: width * 0.7,
-                  color: Colors.grey[200],
-                  child: Row(
-                    children: [
-                      // Expanded(
-                      //   child: TextField(
-                      //       controller: exerciseController,
-                      //       decoration: InputDecoration(
-                      //           prefixIcon: Icon(Icons.fitness_center),
-                      //           hintText: "Exercise")),
-                      // ),
-                      Expanded(
-                          child: MyTextField(
-                        hintText: "Exercise",
-                        controller: exerciseController,
-                        prefixIcon: Icon(Icons.fitness_center),
-                        suffixIcon: IconButton(
-                          icon: Icon(Icons.search),
-                          onPressed: () {
-                            FocusManager.instance.primaryFocus?.unfocus();
-                            setState(() {
-                              exercise = exerciseController.text;
-                            });
-                          },
-                        ),
-                        onSubmitted: (s) {
-                          FocusManager.instance.primaryFocus?.unfocus();
-                          setState(() {
-                            exercise = exerciseController.text;
-                          });
-                        },
-                      )),
-                    ],
+                const SizedBox(height: 20),
+                // Container(
+                // width: width * 0.7,
+                // color: Colors.grey[200],
+                // child: Row(
+                // children: [
+                // Expanded(
+                // child:
+                TextField(
+                  controller: exerciseController,
+                  textInputAction: TextInputAction.go,
+                  onSubmitted: (s) {
+                    setState(() {
+                      exercise = exerciseController.text.toLowerCase();
+                    });
+                    FocusManager.instance.primaryFocus?.unfocus();
+                  },
+                  style: const TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'Search exercises',
+                    prefixIcon: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          exercise = exerciseController.text.toLowerCase();
+                        });
+                        FocusManager.instance.primaryFocus?.unfocus();
+                      },
+                      icon: const Icon(
+                        Icons.search,
+                        size: 30,
+                      ),
+                    ),
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        voiceSearch();
+                      },
+                      icon: const Icon(
+                        Icons.mic,
+                        size: 30,
+                      ),
+                    ),
+                    hintStyle: const TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-                // SizedBox(
-                //   width: width,
-                //   child: Image.asset('assets/images/barChart.png'),
+                //     MyTextField(
+                //   hintText: "Exercise",
+                //   controller: exerciseController,
+                //   prefixIcon: const Icon(Icons.fitness_center),
+                //   suffixIcon: IconButton(
+                //     icon: const Icon(Icons.search),
+                //     onPressed: () {
+                //       FocusManager.instance.primaryFocus?.unfocus();
+                //       setState(() {
+                //         exercise = exerciseController.text.toLowerCase();
+                //       });
+                //     },
+                //   ),
+                //   onSubmitted: (s) {
+                //     FocusManager.instance.primaryFocus?.unfocus();
+                //     setState(() {
+                //       exercise = exerciseController.text.toLowerCase();
+                //     });
+                //   },
+                // )
+                // ),
+                // ],
+                // ),
                 // ),
                 SizedBox(
                     width: double.infinity,
@@ -125,12 +174,12 @@ class _LogScreenState extends State<LogScreen> {
                               return MyLineChart(
                                 title: exercise,
                                 spotsWeight: spotsWeight,
-                                // spotsReps: spotsReps
                               );
                             }
-                            return Center(child: Text('No data found'));
+                            return const Center(child: Text('No data found'));
                           } else {
-                            return Center(child: CircularProgressIndicator());
+                            return const Center(
+                                child: CircularProgressIndicator());
                           }
                         })),
               ],
