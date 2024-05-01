@@ -39,7 +39,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
   final CameraServices cameraServices = CameraServices();
   XFile? image;
 
-  String title = "FITNESS APP";
+  String title = "FitPulse";
   Icon pswdVisible = const Icon(Icons.visibility_off_outlined);
   bool isPswdVisible = true;
   int isModalActive = 0;
@@ -162,7 +162,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
         // this is for the title, it makes sure that the title is the one it should show
         isModalActive -= 1;
         if (isModalActive == 0) {
-          title = "Fitness App";
+          title = "FitPulse";
         }
       });
     });
