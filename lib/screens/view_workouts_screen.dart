@@ -3,7 +3,6 @@ import 'package:fitness_app/components/workout_data_container.dart';
 import 'package:fitness_app/services/workout_data_services.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-// import 'dart:developer';
 
 class ViewWorkoutsScreen extends StatelessWidget {
   final String workoutName;

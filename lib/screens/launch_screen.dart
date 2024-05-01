@@ -44,12 +44,6 @@ class _LaunchScreenState extends State<LaunchScreen> {
   bool isPswdVisible = true;
   int isModalActive = 0;
 
-  // Future<void> _saveUserDetails() async {
-  //   final path = (await getApplicationDocumentsDirectory()).path;
-
-  //   await DatabaseServices.addUserDetails(signupEmailController.text, path);
-  // }
-
   Future<void> signIn() async {
     if (signinEmailController.text.isNotEmpty &&
         signinPasswordController.text.isNotEmpty) {
@@ -419,7 +413,6 @@ class _LaunchScreenState extends State<LaunchScreen> {
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Container(
-          // height: double.infinity,
           decoration: const BoxDecoration(
             image: DecorationImage(
               image: AssetImage("assets/images/background.jpg"),

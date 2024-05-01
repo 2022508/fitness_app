@@ -60,12 +60,6 @@ class _AccountScreenState extends State<AccountScreen> {
     }
   }
 
-  // Future<void> _saveUserDetails() async {
-  //   final path = (await getApplicationDocumentsDirectory()).path;
-
-  //   await DatabaseServices.addUserDetails(fire.currentUser!.email!, path);
-  // }
-
   void modalBottomSheet(Widget widget, String newTitle, [Color? color]) {
     showModalBottomSheet(
       isScrollControlled: true,

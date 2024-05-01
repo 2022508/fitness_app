@@ -1,9 +1,7 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fitness_app/components/chart.dart';
-import 'package:fitness_app/components/text_field.dart';
+import 'package:fitness_app/components/search_bar.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -59,8 +57,8 @@ class _LogScreenState extends State<LogScreen> {
     FocusManager.instance.primaryFocus?.unfocus();
     SpeechToText speech = SpeechToText();
     bool available = await speech.initialize(
-      onStatus: (status) => print('onStatus: $status'),
-      onError: (errorNotification) => print('onError: $errorNotification'),
+      onStatus: (status) => log('onStatus: $status'),
+      onError: (errorNotification) => log('onError: $errorNotification'),
     );
     if (available) {
       speech.listen(
@@ -73,7 +71,7 @@ class _LogScreenState extends State<LogScreen> {
         listenFor: const Duration(seconds: 5),
       );
     } else {
-      print('The user has denied the use of speech recognition.');
+      log('The user has denied the use of speech recognition.');
     }
   }
 
@@ -88,80 +86,23 @@ class _LogScreenState extends State<LogScreen> {
           child: Center(
             child: Column(
               children: [
-                const SizedBox(height: 20),
-                // Container(
-                // width: width * 0.7,
-                // color: Colors.grey[200],
-                // child: Row(
-                // children: [
-                // Expanded(
-                // child:
-                TextField(
-                  controller: exerciseController,
-                  textInputAction: TextInputAction.go,
-                  onSubmitted: (s) {
-                    setState(() {
-                      exercise = exerciseController.text.toLowerCase();
-                    });
-                    FocusManager.instance.primaryFocus?.unfocus();
-                  },
-                  style: const TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  decoration: InputDecoration(
-                    hintText: 'Search exercises',
-                    prefixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          exercise = exerciseController.text.toLowerCase();
-                        });
-                        FocusManager.instance.primaryFocus?.unfocus();
-                      },
-                      icon: const Icon(
-                        Icons.search,
-                        size: 30,
-                      ),
-                    ),
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        voiceSearch();
-                      },
-                      icon: const Icon(
-                        Icons.mic,
-                        size: 30,
-                      ),
-                    ),
-                    hintStyle: const TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                //     MyTextField(
-                //   hintText: "Exercise",
-                //   controller: exerciseController,
-                //   prefixIcon: const Icon(Icons.fitness_center),
-                //   suffixIcon: IconButton(
-                //     icon: const Icon(Icons.search),
-                //     onPressed: () {
-                //       FocusManager.instance.primaryFocus?.unfocus();
-                //       setState(() {
-                //         exercise = exerciseController.text.toLowerCase();
-                //       });
-                //     },
-                //   ),
-                //   onSubmitted: (s) {
-                //     FocusManager.instance.primaryFocus?.unfocus();
-                //     setState(() {
-                //       exercise = exerciseController.text.toLowerCase();
-                //     });
-                //   },
-                // )
-                // ),
-                // ],
-                // ),
-                // ),
+                MySearchBar(
+                    controller: exerciseController,
+                    onSubmitted: (s) {
+                      setState(() {
+                        exercise = exerciseController.text.toLowerCase();
+                      });
+                      FocusManager.instance.primaryFocus?.unfocus();
+                    },
+                    onPressed: () {
+                      setState(() {
+                        exercise = exerciseController.text.toLowerCase();
+                      });
+                      FocusManager.instance.primaryFocus?.unfocus();
+                    },
+                    onPressedVoice: () {
+                      voiceSearch();
+                    }),
                 SizedBox(
                     width: double.infinity,
                     height: width + 100,

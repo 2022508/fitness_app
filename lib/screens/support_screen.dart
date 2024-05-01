@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fitness_app/components/search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -92,45 +93,20 @@ class _SupportPageState extends State<SupportPage> {
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: [
-                  TextField(
-                    controller: controller,
-                    textInputAction: TextInputAction.go,
-                    onSubmitted: (s) {
-                      searchExercise(controller.text);
-                      FocusManager.instance.primaryFocus?.unfocus();
-                    },
-                    onChanged: searchExercise,
-                    style: const TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    decoration: InputDecoration(
-                      hintText: 'Search exercises',
-                      prefixIcon: IconButton(
-                        onPressed: () {
-                          searchExercise(controller.text);
-                          FocusManager.instance.primaryFocus?.unfocus();
-                        },
-                        icon: const Icon(
-                          Icons.search,
-                          size: 30,
-                        ),
-                      ),
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          voiceSearch();
-                        },
-                        icon: const Icon(
-                          Icons.mic,
-                          size: 30,
-                        ),
-                      ),
-                      hintStyle: const TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+                  MySearchBar(
+                      controller: controller,
+                      onSubmitted: (s) {
+                        searchExercise(controller.text);
+                        FocusManager.instance.primaryFocus?.unfocus();
+                      },
+                      onPressed: () {
+                        searchExercise(controller.text);
+                        FocusManager.instance.primaryFocus?.unfocus();
+                      },
+                      onPressedVoice: () {
+                        voiceSearch();
+                      },
+                      onChanged: searchExercise),
                   Container(
                     width: width,
                     color: Colors.grey[200],

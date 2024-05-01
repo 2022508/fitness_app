@@ -57,7 +57,6 @@ class WorkoutListScreen extends StatelessWidget {
                                       );
                                     },
                                     text: text);
-                                // text: docIDs[index].toString());
                               });
                         } else {
                           return const Center(

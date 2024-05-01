@@ -4,7 +4,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class MyLineChart extends StatefulWidget {
+class MyLineChart extends StatelessWidget {
   late String title;
   final List<FlSpot> spotsWeight;
 
@@ -15,20 +15,15 @@ class MyLineChart extends StatefulWidget {
   });
 
   @override
-  State<MyLineChart> createState() => _MyLineChartState();
-}
-
-class _MyLineChartState extends State<MyLineChart> {
-  @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
-    final int lastIndex = widget.spotsWeight.length - 1;
-    if (widget.title == '') widget.title = 'bench press';
+    final int lastIndex = spotsWeight.length - 1;
+    if (title == '') title = 'bench press';
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(children: [
-        const SizedBox(height: 20),
-        Text("${widget.title} (kg)", style: const TextStyle(fontSize: 30)),
+        const SizedBox(height: 10),
+        Text("$title (kg)", style: const TextStyle(fontSize: 30)),
         const SizedBox(height: 20),
         SizedBox(
             width: double.infinity,
@@ -38,7 +33,7 @@ class _MyLineChartState extends State<MyLineChart> {
                 backgroundColor: Colors.grey[300],
                 lineBarsData: [
                   LineChartBarData(
-                    spots: widget.spotsWeight,
+                    spots: spotsWeight,
                     color: Colors.blue,
                     barWidth: 2,
                     isCurved: true,
@@ -73,12 +68,11 @@ class _MyLineChartState extends State<MyLineChart> {
           children: [
             SizedBox(width: width / 15),
             Text(DateFormat('dd/MM/yy').format(
-                DateTime.fromMillisecondsSinceEpoch(
-                    widget.spotsWeight[0].x.toInt()))),
+                DateTime.fromMillisecondsSinceEpoch(spotsWeight[0].x.toInt()))),
             const Spacer(),
             Text(DateFormat('dd/MM/yy').format(
                 DateTime.fromMillisecondsSinceEpoch(
-                    widget.spotsWeight[lastIndex].x.toInt()))),
+                    spotsWeight[lastIndex].x.toInt()))),
           ],
         ),
         const SizedBox(height: 5),

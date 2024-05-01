@@ -6,6 +6,7 @@ class MyPasswordTextField extends StatefulWidget {
   final Color? color;
   final Icon? prefixIcon;
   final IconButton? suffixIcon;
+
   const MyPasswordTextField(
       {super.key,
       required this.hintText,

@@ -11,6 +11,7 @@ class MyTextField extends StatelessWidget {
   final void Function(String)? onSubmitted;
   final TextInputType? keyboardType;
   final List<TextInputFormatter> inputFormatters;
+
   const MyTextField(
       {super.key,
       required this.hintText,
