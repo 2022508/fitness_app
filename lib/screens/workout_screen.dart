@@ -79,7 +79,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Enter',
+                      const Text('Workout',
                           style: TextStyle(
                               fontSize: 35, fontWeight: FontWeight.w400)),
                       const SizedBox(height: 10),

@@ -44,7 +44,7 @@ class MyLineChart extends StatelessWidget {
                 titlesData: const FlTitlesData(
                   leftTitles: AxisTitles(
                       sideTitles:
-                          SideTitles(reservedSize: 30, showTitles: true)),
+                          SideTitles(reservedSize: 36, showTitles: true)),
                   rightTitles: AxisTitles(sideTitles: SideTitles()),
                   topTitles: AxisTitles(sideTitles: SideTitles()),
                   bottomTitles: AxisTitles(sideTitles: SideTitles()),
