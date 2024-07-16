@@ -11,14 +11,10 @@ class MyAuth extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: StreamBuilder(
-        stream: FirebaseAuth.instance.userChanges(),
+        stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
-          if (snapshot.data != null) {
-            if (snapshot.data?.displayName != null) {
-              return const VerifyEmailScreen();
-            } else {
-              return const LaunchScreen();
-            }
+          if (snapshot.hasData) {
+            return const VerifyEmailScreen();
           } else {
             return const LaunchScreen();
           }

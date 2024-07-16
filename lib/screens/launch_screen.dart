@@ -12,9 +12,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fitness_app/components/elevated_button.dart';
 import 'package:fitness_app/components/password_text_field.dart';
 import 'package:fitness_app/components/text_field.dart';
-import 'package:fitness_app/services/camera_services.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'dart:developer';
 
 class LaunchScreen extends StatefulWidget {
@@ -28,16 +26,12 @@ class _LaunchScreenState extends State<LaunchScreen> {
   final signinEmailController = TextEditingController();
   final signinPasswordController = TextEditingController();
 
-  final signupNameController = TextEditingController();
   final signupEmailController = TextEditingController();
   final signupPasswordController = TextEditingController();
 
   final resetPasswordEmailController = TextEditingController();
   bool canResendEmail = false;
   Timer? timer;
-
-  final CameraServices cameraServices = CameraServices();
-  XFile? image;
 
   String title = "FitPulse";
   Icon pswdVisible = const Icon(Icons.visibility_off_outlined);
@@ -82,10 +76,8 @@ class _LaunchScreenState extends State<LaunchScreen> {
   }
 
   Future signUp() async {
-    if (signupNameController.text.isNotEmpty &&
-        signupEmailController.text.isNotEmpty &&
-        signupPasswordController.text.isNotEmpty &&
-        image != null) {
+    if (signupEmailController.text.isNotEmpty &&
+        signupPasswordController.text.isNotEmpty) {
       Navigator.pop(context);
 
       showDialog(
@@ -102,9 +94,6 @@ class _LaunchScreenState extends State<LaunchScreen> {
         if (mounted) {
           Navigator.pop(context);
         }
-        await cameraServices.saveUserDetails();
-        await cameraServices.saveImage(image!, signupEmailController.text);
-        await result.user?.updateDisplayName(signupNameController.text);
 
         //profile picture upload stuff
       } on FirebaseAuthException catch (e) {
@@ -248,12 +237,6 @@ class _LaunchScreenState extends State<LaunchScreen> {
         Wrap(
           children: [
             MyTextField(
-                controller: signupNameController,
-                hintText: "Name",
-                prefixIcon:
-                    const Icon(Icons.account_circle_sharp, color: Colors.white),
-                color: Colors.white),
-            MyTextField(
                 keyboardType: TextInputType.emailAddress,
                 controller: signupEmailController,
                 hintText: "Email",
@@ -263,17 +246,7 @@ class _LaunchScreenState extends State<LaunchScreen> {
                 controller: signupPasswordController,
                 hintText: "Password",
                 color: Colors.white),
-            Padding(
-              padding: const EdgeInsets.only(top: 5),
-              child: Center(
-                  child: IconButton(
-                      onPressed: pfpModalBottomSheet,
-                      icon: const Icon(
-                        Icons.add_a_photo,
-                        color: Colors.red,
-                        size: 30,
-                      ))),
-            ),
+            const SizedBox(height: 98),
             ListTile(
               title: MyElevatedButton(
                   text: "Sign up",
@@ -303,37 +276,6 @@ class _LaunchScreenState extends State<LaunchScreen> {
           ],
         ),
         "Create Account");
-  }
-
-  void pfpModalBottomSheet() {
-    modalBottomSheet(
-      Row(
-        children: [
-          Expanded(
-            child: IconButton(
-              onPressed: () async {
-                image = await cameraServices.getPhoto(ImageSource.camera);
-              },
-              icon: const Icon(
-                Icons.camera_alt,
-                size: 100,
-                color: Colors.white,
-              ),
-            ),
-          ),
-          Expanded(
-            child: IconButton(
-              onPressed: () async {
-                image = await cameraServices.getPhoto(ImageSource.gallery);
-              },
-              icon: const Icon(Icons.photo, size: 100, color: Colors.white),
-            ),
-          )
-        ],
-      ),
-      "Profile Picture",
-      Colors.black.withOpacity(0.5),
-    );
   }
 
   Future sendVerificationEmail() async {
