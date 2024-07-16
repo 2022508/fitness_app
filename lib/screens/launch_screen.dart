@@ -86,10 +86,9 @@ class _LaunchScreenState extends State<LaunchScreen> {
             return const Center(child: CircularProgressIndicator());
           });
       try {
-        UserCredential result = await FirebaseAuth.instance
-            .createUserWithEmailAndPassword(
-                email: signupEmailController.text,
-                password: signupPasswordController.text);
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+            email: signupEmailController.text,
+            password: signupPasswordController.text);
         //gets id of circular progress indicator
         if (mounted) {
           Navigator.pop(context);

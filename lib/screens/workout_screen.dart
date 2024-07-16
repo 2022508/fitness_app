@@ -45,6 +45,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
           notesController.text,
           docIDs,
           workoutData);
+      // workoutDataService.getDocId(docIDs, "log");
       clearFields();
     } else {
       showDialog(

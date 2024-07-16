@@ -1,7 +1,6 @@
 // https://www.youtube.com/watch?v=t_GcR_9-NcY
 // used to help delete the users data from firestore
 
-import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fitness_app/components/elevated_button.dart';
 import 'package:fitness_app/components/password_text_field.dart';
@@ -9,8 +8,7 @@ import 'package:fitness_app/components/text_field.dart';
 import 'package:fitness_app/services/auth_services.dart';
 import 'package:fitness_app/services/workout_data_services.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:developer';
+// import 'dart:developer';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
