@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fitness_app/components/elevated_button.dart';
 import 'package:fitness_app/components/text_field.dart';
 import 'package:fitness_app/screens/view_workouts_screen.dart';
@@ -30,8 +29,6 @@ class _CreateScreenState extends State<CreateScreen> {
   TextEditingController notesController = TextEditingController();
 
   Map<String, dynamic> workoutData = {};
-
-  var fire = FirebaseFirestore.instance;
 
   final WorkoutDataService workoutDataService = WorkoutDataService();
 
