@@ -11,9 +11,9 @@ class WorkoutDataService {
 
   Future<List<dynamic>> getDocId(List docIDs, String db) async {
     await FirebaseFirestore.instance
-        .collection(FirebaseAuth.instance.currentUser!.email!)
-        .doc(db)
-        .collection('workouts')
+        .collection("users")
+        .doc(FirebaseAuth.instance.currentUser!.email!)
+        .collection(db)
         .get()
         .then((querySnapshot) {
       docIDs.clear();
@@ -41,9 +41,9 @@ class WorkoutDataService {
       }
     }
     await FirebaseFirestore.instance
-        .collection(FirebaseAuth.instance.currentUser!.email!)
-        .doc('log')
-        .collection('workouts')
+        .collection("users")
+        .doc(FirebaseAuth.instance.currentUser!.email!)
+        .collection('log')
         .doc(finalTimeStamp.toString())
         .set({
       exercise: {
@@ -61,9 +61,9 @@ class WorkoutDataService {
   Future setWorkoutDataCreate(String name, String exercise, String weight,
       String reps, String notes, List docIDs) async {
     await FirebaseFirestore.instance
-        .collection(FirebaseAuth.instance.currentUser!.email!)
-        .doc('create')
-        .collection('workouts')
+        .collection("users")
+        .doc(FirebaseAuth.instance.currentUser!.email!)
+        .collection('create')
         .doc(name)
         .set({
       exercise: {
@@ -77,9 +77,9 @@ class WorkoutDataService {
 
   Future getWorkoutData(String db, Map<String, dynamic> workoutData) async {
     await FirebaseFirestore.instance
-        .collection(FirebaseAuth.instance.currentUser!.email!)
-        .doc(db)
-        .collection('workouts')
+        .collection("users")
+        .doc(FirebaseAuth.instance.currentUser!.email!)
+        .collection(db)
         .get()
         .then((querySnapshot) {
       for (var result in querySnapshot.docs) {
@@ -91,9 +91,9 @@ class WorkoutDataService {
   Future updateNotes(
       String db, String title, String exercise, String notes) async {
     await FirebaseFirestore.instance
-        .collection(FirebaseAuth.instance.currentUser!.email!)
-        .doc(db)
-        .collection('workouts')
+        .collection("users")
+        .doc(FirebaseAuth.instance.currentUser!.email!)
+        .collection(db)
         .doc(title)
         .set({
       exercise: {
@@ -104,9 +104,9 @@ class WorkoutDataService {
 
   Future deleteWorkoutDataLog(String email) async {
     CollectionReference collectionWorkouts = FirebaseFirestore.instance
-        .collection(email)
-        .doc("log")
-        .collection("workouts");
+        .collection("users")
+        .doc(email)
+        .collection("log");
     QuerySnapshot snapshotWorkouts = await collectionWorkouts.get();
     for (QueryDocumentSnapshot doc in snapshotWorkouts.docs) {
       doc.reference.delete();
@@ -115,9 +115,9 @@ class WorkoutDataService {
 
   Future deleteWorkoutDataCreate(String email) async {
     CollectionReference collectionLog = FirebaseFirestore.instance
-        .collection(email)
-        .doc("create")
-        .collection("workouts");
+        .collection("users")
+        .doc(email)
+        .collection("create");
     QuerySnapshot snapshotLog = await collectionLog.get();
     for (QueryDocumentSnapshot doc in snapshotLog.docs) {
       doc.reference.delete();
@@ -125,11 +125,6 @@ class WorkoutDataService {
   }
 
   Future deleteUserData(String email) async {
-    CollectionReference collectionUser =
-        FirebaseFirestore.instance.collection(email);
-    QuerySnapshot snapshotUser = await collectionUser.get();
-    for (QueryDocumentSnapshot doc in snapshotUser.docs) {
-      doc.reference.delete();
-    }
+    FirebaseFirestore.instance.collection("users").doc(email).delete();
   }
 }

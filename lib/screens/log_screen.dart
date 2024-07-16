@@ -25,9 +25,9 @@ class _LogScreenState extends State<LogScreen> {
     workoutData.clear();
     spotsWeight.clear();
     await fire
-        .collection(FirebaseAuth.instance.currentUser!.email!)
-        .doc('log')
-        .collection('workouts')
+        .collection("users")
+        .doc(FirebaseAuth.instance.currentUser!.email!)
+        .collection("log")
         .get()
         .then((querySnapshot) {
       List<dynamic> exerciseWeight = [];
