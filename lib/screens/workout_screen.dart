@@ -39,7 +39,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
         weightController.text.isNotEmpty &&
         repsController.text.isNotEmpty) {
       workoutDataService.setWorkoutDataLog(
-          exerciseController.text.toLowerCase(),
+          exerciseController.text.toLowerCase().trim(),
           weightController.text,
           repsController.text,
           notesController.text,
@@ -56,7 +56,6 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
           });
     }
     FocusManager.instance.primaryFocus?.unfocus();
-    setState(() {});
   }
 
   @override
@@ -182,7 +181,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                     future: workoutDataService.getDocId(docIDs, "log"),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.done) {
-                        docIDs = docIDs.reversed.toList();
+                        docIDs = snapshot.requireData.reversed.toList();
                         int length = docIDs.length;
                         if (docIDs.length > 3) {
                           length = 3;
