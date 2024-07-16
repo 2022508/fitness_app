@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fitness_app/components/workout_data_container.dart';
 import 'package:fitness_app/services/workout_data_services.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +9,6 @@ class ViewWorkoutsScreen extends StatelessWidget {
   ViewWorkoutsScreen(
       {super.key, required this.workoutName, required this.database});
 
-  final fire = FirebaseFirestore.instance;
   final Map<String, dynamic> workoutData = {};
   final WorkoutDataService workoutDataService = WorkoutDataService();
 

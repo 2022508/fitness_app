@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fitness_app/components/elevated_button.dart';
 import 'package:fitness_app/components/text_field.dart';
 import 'package:fitness_app/screens/view_workouts_screen.dart';
@@ -26,7 +25,6 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
 
   final Map<String, dynamic> workoutData = {};
 
-  var fire = FirebaseFirestore.instance;
   void clearFields() {
     exerciseController.clear();
     weightController.clear();
